@@ -1,0 +1,1428 @@
+[
+  {
+    "_id": {
+      "$oid": "6a3becbd9a2c2702ddfc290f"
+    },
+    "title": "Bộ câu hỏi ôn tập 1",
+    "subject": "PRU212",
+    "teacherId": {
+      "$oid": "6a3bd5e1a47451cef123d873"
+    },
+    "xp": 100,
+    "status": "public",
+    "questions": [
+      {
+        "questionText": "Câu hỏi 1 của bộ đề 1: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Giải thích chi tiết cho câu hỏi 1",
+        "_id": {
+          "$oid": "6a3becbd92edf80cd8fbb3db"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 2 của bộ đề 1: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Giải thích chi tiết cho câu hỏi 2",
+        "_id": {
+          "$oid": "6a3becbdb872e5b9a54cdb5e"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 3 của bộ đề 1: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Giải thích chi tiết cho câu hỏi 3",
+        "_id": {
+          "$oid": "6a3becbdc9b1e66eca21d410"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 4 của bộ đề 1: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Giải thích chi tiết cho câu hỏi 4",
+        "_id": {
+          "$oid": "6a3becbdae3e75c2e5f5821a"
+        }
+      }
+    ],
+    "plays": 65,
+    "deleted": false,
+    "createdAt": {
+      "$date": "2026-06-24T14:42:05.053Z"
+    },
+    "updatedAt": {
+      "$date": "2026-06-24T14:42:05.053Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a3becbdfa33318b47787c4e"
+    },
+    "title": "Bộ câu hỏi ôn tập 2",
+    "subject": "SSL101c",
+    "teacherId": {
+      "$oid": "6a3bd5e1a47451cef123d873"
+    },
+    "xp": 10,
+    "status": "public",
+    "questions": [
+      {
+        "questionText": "Câu hỏi 1 của bộ đề 2: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Giải thích chi tiết cho câu hỏi 1",
+        "_id": {
+          "$oid": "6a3becbdd80685cc57b7f366"
+        }
+      }
+    ],
+    "plays": 69,
+    "deleted": false,
+    "createdAt": {
+      "$date": "2026-06-24T14:42:05.054Z"
+    },
+    "updatedAt": {
+      "$date": "2026-06-24T14:42:05.054Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a3becbd5d1bb038f9c5767a"
+    },
+    "title": "Bộ câu hỏi ôn tập 3",
+    "subject": "DBI202",
+    "teacherId": {
+      "$oid": "6a3bd5e1a47451cef123d873"
+    },
+    "xp": 40,
+    "status": "public",
+    "questions": [
+      {
+        "questionText": "Câu hỏi 1 của bộ đề 3: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Giải thích chi tiết cho câu hỏi 1",
+        "_id": {
+          "$oid": "6a3becbd5790b965d813cf76"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 2 của bộ đề 3: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Giải thích chi tiết cho câu hỏi 2",
+        "_id": {
+          "$oid": "6a3becbde280596229324906"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 3 của bộ đề 3: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Giải thích chi tiết cho câu hỏi 3",
+        "_id": {
+          "$oid": "6a3becbd7fe85c4d3fee0329"
+        }
+      }
+    ],
+    "plays": 30,
+    "deleted": false,
+    "createdAt": {
+      "$date": "2026-06-24T14:42:05.054Z"
+    },
+    "updatedAt": {
+      "$date": "2026-06-24T14:42:05.054Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a3becbd330d32f11ce4a989"
+    },
+    "title": "Bộ câu hỏi ôn tập 4",
+    "subject": "SSG",
+    "teacherId": {
+      "$oid": "6a3bd5e1a47451cef123d873"
+    },
+    "xp": 80,
+    "status": "draft",
+    "questions": [
+      {
+        "questionText": "Câu hỏi 1 của bộ đề 4: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Giải thích chi tiết cho câu hỏi 1",
+        "_id": {
+          "$oid": "6a3becbd9b9393add11e79ec"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 2 của bộ đề 4: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Giải thích chi tiết cho câu hỏi 2",
+        "_id": {
+          "$oid": "6a3becbde49c6ef70249c682"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 3 của bộ đề 4: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Giải thích chi tiết cho câu hỏi 3",
+        "_id": {
+          "$oid": "6a3becbd880e3098f18fb0a5"
+        }
+      }
+    ],
+    "plays": 38,
+    "deleted": false,
+    "createdAt": {
+      "$date": "2026-06-24T14:42:05.054Z"
+    },
+    "updatedAt": {
+      "$date": "2026-06-24T14:42:05.054Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a3becbdd0d1e1ad16b99807"
+    },
+    "title": "Bộ câu hỏi ôn tập 5",
+    "subject": "SSL101c",
+    "teacherId": {
+      "$oid": "6a3bd5e1a47451cef123d873"
+    },
+    "xp": 60,
+    "status": "public",
+    "questions": [
+      {
+        "questionText": "Câu hỏi 1 của bộ đề 5: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Giải thích chi tiết cho câu hỏi 1",
+        "_id": {
+          "$oid": "6a3becbdbf69503ff8f2173e"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 2 của bộ đề 5: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Giải thích chi tiết cho câu hỏi 2",
+        "_id": {
+          "$oid": "6a3becbd3e230ef20479f970"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 3 của bộ đề 5: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Giải thích chi tiết cho câu hỏi 3",
+        "_id": {
+          "$oid": "6a3becbd7c4890117d116caf"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 4 của bộ đề 5: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Giải thích chi tiết cho câu hỏi 4",
+        "_id": {
+          "$oid": "6a3becbd5f186b434cc60d88"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 5 của bộ đề 5: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Giải thích chi tiết cho câu hỏi 5",
+        "_id": {
+          "$oid": "6a3becbdf4f27fc974316bae"
+        }
+      }
+    ],
+    "plays": 96,
+    "deleted": false,
+    "createdAt": {
+      "$date": "2026-06-24T14:42:05.054Z"
+    },
+    "updatedAt": {
+      "$date": "2026-06-24T14:42:05.054Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a3becbd27fbd98528ebe971"
+    },
+    "title": "Bộ câu hỏi ôn tập 6",
+    "subject": "SSL101c",
+    "teacherId": {
+      "$oid": "6a3bd5e1a47451cef123d873"
+    },
+    "xp": 70,
+    "status": "public",
+    "questions": [
+      {
+        "questionText": "Câu hỏi 1 của bộ đề 6: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Giải thích chi tiết cho câu hỏi 1",
+        "_id": {
+          "$oid": "6a3becbdc1b923b74e0d4333"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 2 của bộ đề 6: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Giải thích chi tiết cho câu hỏi 2",
+        "_id": {
+          "$oid": "6a3becbd7e38a7cbdc502f10"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 3 của bộ đề 6: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Giải thích chi tiết cho câu hỏi 3",
+        "_id": {
+          "$oid": "6a3becbd7b6350586befa2d7"
+        }
+      }
+    ],
+    "plays": 14,
+    "deleted": false,
+    "createdAt": {
+      "$date": "2026-06-24T14:42:05.054Z"
+    },
+    "updatedAt": {
+      "$date": "2026-06-24T14:42:05.054Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a3becbd3e516306fa621ded"
+    },
+    "title": "Bộ câu hỏi ôn tập 7",
+    "subject": "SSL101c",
+    "teacherId": {
+      "$oid": "6a3bd5e1a47451cef123d873"
+    },
+    "xp": 100,
+    "status": "public",
+    "questions": [
+      {
+        "questionText": "Câu hỏi 1 của bộ đề 7: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Giải thích chi tiết cho câu hỏi 1",
+        "_id": {
+          "$oid": "6a3becbda0e4109b6c351399"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 2 của bộ đề 7: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Giải thích chi tiết cho câu hỏi 2",
+        "_id": {
+          "$oid": "6a3becbd565bc447cc494f9d"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 3 của bộ đề 7: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Giải thích chi tiết cho câu hỏi 3",
+        "_id": {
+          "$oid": "6a3becbd7b2ac3dae2cde18d"
+        }
+      }
+    ],
+    "plays": 8,
+    "deleted": false,
+    "createdAt": {
+      "$date": "2026-06-24T14:42:05.054Z"
+    },
+    "updatedAt": {
+      "$date": "2026-06-24T14:42:05.054Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a3becbd34da0741d46b40d0"
+    },
+    "title": "Bộ câu hỏi ôn tập 8",
+    "subject": "SSG",
+    "teacherId": {
+      "$oid": "6a3bd5e1a47451cef123d873"
+    },
+    "xp": 10,
+    "status": "public",
+    "questions": [
+      {
+        "questionText": "Câu hỏi 1 của bộ đề 8: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Giải thích chi tiết cho câu hỏi 1",
+        "_id": {
+          "$oid": "6a3becbd72b8ad95d022587d"
+        }
+      }
+    ],
+    "plays": 16,
+    "deleted": false,
+    "createdAt": {
+      "$date": "2026-06-24T14:42:05.054Z"
+    },
+    "updatedAt": {
+      "$date": "2026-06-24T14:42:05.054Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a3becbd1f5b288cc82fc32f"
+    },
+    "title": "Bộ câu hỏi ôn tập 9",
+    "subject": "SWP391",
+    "teacherId": {
+      "$oid": "6a3bd5e1a47451cef123d873"
+    },
+    "xp": 60,
+    "status": "public",
+    "questions": [
+      {
+        "questionText": "Câu hỏi 1 của bộ đề 9: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Giải thích chi tiết cho câu hỏi 1",
+        "_id": {
+          "$oid": "6a3becbdcb22a2a7990eec09"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 2 của bộ đề 9: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Giải thích chi tiết cho câu hỏi 2",
+        "_id": {
+          "$oid": "6a3becbd1f356cde8ef83a3a"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 3 của bộ đề 9: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Giải thích chi tiết cho câu hỏi 3",
+        "_id": {
+          "$oid": "6a3becbde99bd0b5667c5e83"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 4 của bộ đề 9: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Giải thích chi tiết cho câu hỏi 4",
+        "_id": {
+          "$oid": "6a3becbd21f5c24dcc35201a"
+        }
+      }
+    ],
+    "plays": 14,
+    "deleted": false,
+    "createdAt": {
+      "$date": "2026-06-24T14:42:05.054Z"
+    },
+    "updatedAt": {
+      "$date": "2026-06-24T14:42:05.054Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a3becbd4d4145da97aa64c9"
+    },
+    "title": "Bộ câu hỏi ôn tập 10",
+    "subject": "PRU212",
+    "teacherId": {
+      "$oid": "6a3bd5e1a47451cef123d873"
+    },
+    "xp": 50,
+    "status": "public",
+    "questions": [
+      {
+        "questionText": "Câu hỏi 1 của bộ đề 10: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Giải thích chi tiết cho câu hỏi 1",
+        "_id": {
+          "$oid": "6a3becbd05486adb0290fdb9"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 2 của bộ đề 10: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Giải thích chi tiết cho câu hỏi 2",
+        "_id": {
+          "$oid": "6a3becbd117fa0016ba01679"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 3 của bộ đề 10: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Giải thích chi tiết cho câu hỏi 3",
+        "_id": {
+          "$oid": "6a3becbdee0f1c76f4e97672"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 4 của bộ đề 10: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Giải thích chi tiết cho câu hỏi 4",
+        "_id": {
+          "$oid": "6a3becbdec4056d6cb10b6d8"
+        }
+      }
+    ],
+    "plays": 34,
+    "deleted": false,
+    "createdAt": {
+      "$date": "2026-06-24T14:42:05.054Z"
+    },
+    "updatedAt": {
+      "$date": "2026-06-24T14:42:05.054Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a3becbd6878e43507cc5fed"
+    },
+    "title": "Bộ câu hỏi ôn tập 11",
+    "subject": "SSL101c",
+    "teacherId": {
+      "$oid": "6a3bd5e1a47451cef123d873"
+    },
+    "xp": 80,
+    "status": "public",
+    "questions": [
+      {
+        "questionText": "Câu hỏi 1 của bộ đề 11: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Giải thích chi tiết cho câu hỏi 1",
+        "_id": {
+          "$oid": "6a3becbd5079eb31f83b7d0b"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 2 của bộ đề 11: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Giải thích chi tiết cho câu hỏi 2",
+        "_id": {
+          "$oid": "6a3becbdc2664d730c687b34"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 3 của bộ đề 11: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Giải thích chi tiết cho câu hỏi 3",
+        "_id": {
+          "$oid": "6a3becbd73b371788c7acd38"
+        }
+      }
+    ],
+    "plays": 82,
+    "deleted": false,
+    "createdAt": {
+      "$date": "2026-06-24T14:42:05.054Z"
+    },
+    "updatedAt": {
+      "$date": "2026-06-24T14:42:05.054Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a3becbd1d234fa76fd53c96"
+    },
+    "title": "Bộ câu hỏi ôn tập 12",
+    "subject": "PRU212",
+    "teacherId": {
+      "$oid": "6a3bd5e1a47451cef123d873"
+    },
+    "xp": 10,
+    "status": "draft",
+    "questions": [
+      {
+        "questionText": "Câu hỏi 1 của bộ đề 12: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Giải thích chi tiết cho câu hỏi 1",
+        "_id": {
+          "$oid": "6a3becbd67e964ea196ec1d8"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 2 của bộ đề 12: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Giải thích chi tiết cho câu hỏi 2",
+        "_id": {
+          "$oid": "6a3becbdc44b8e749311664e"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 3 của bộ đề 12: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Giải thích chi tiết cho câu hỏi 3",
+        "_id": {
+          "$oid": "6a3becbd3dfc32c1781fdc89"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 4 của bộ đề 12: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Giải thích chi tiết cho câu hỏi 4",
+        "_id": {
+          "$oid": "6a3becbd75dd7236367d4d9c"
+        }
+      }
+    ],
+    "plays": 65,
+    "deleted": false,
+    "createdAt": {
+      "$date": "2026-06-24T14:42:05.054Z"
+    },
+    "updatedAt": {
+      "$date": "2026-06-24T14:42:05.054Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a3becbd71f0c3859031c617"
+    },
+    "title": "Bộ câu hỏi ôn tập 13",
+    "subject": "PRU212",
+    "teacherId": {
+      "$oid": "6a3bd5e1a47451cef123d873"
+    },
+    "xp": 100,
+    "status": "draft",
+    "questions": [
+      {
+        "questionText": "Câu hỏi 1 của bộ đề 13: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Giải thích chi tiết cho câu hỏi 1",
+        "_id": {
+          "$oid": "6a3becbde2f2ddc278441dae"
+        }
+      }
+    ],
+    "plays": 0,
+    "deleted": false,
+    "createdAt": {
+      "$date": "2026-06-24T14:42:05.054Z"
+    },
+    "updatedAt": {
+      "$date": "2026-06-24T14:42:05.054Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a3becbdeb3b888d78a8182d"
+    },
+    "title": "Bộ câu hỏi ôn tập 14",
+    "subject": "SSG",
+    "teacherId": {
+      "$oid": "6a3bd5e1a47451cef123d873"
+    },
+    "xp": 20,
+    "status": "draft",
+    "questions": [
+      {
+        "questionText": "Câu hỏi 1 của bộ đề 14: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Giải thích chi tiết cho câu hỏi 1",
+        "_id": {
+          "$oid": "6a3becbd64f513094ce9b088"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 2 của bộ đề 14: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Giải thích chi tiết cho câu hỏi 2",
+        "_id": {
+          "$oid": "6a3becbde6097adbeb2eb616"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 3 của bộ đề 14: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Giải thích chi tiết cho câu hỏi 3",
+        "_id": {
+          "$oid": "6a3becbddd087a68235eb8c1"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 4 của bộ đề 14: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Giải thích chi tiết cho câu hỏi 4",
+        "_id": {
+          "$oid": "6a3becbd04ac38c85479086b"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 5 của bộ đề 14: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Giải thích chi tiết cho câu hỏi 5",
+        "_id": {
+          "$oid": "6a3becbd9b3cdab3fe1c20fe"
+        }
+      }
+    ],
+    "plays": 73,
+    "deleted": false,
+    "createdAt": {
+      "$date": "2026-06-24T14:42:05.054Z"
+    },
+    "updatedAt": {
+      "$date": "2026-06-24T14:42:05.054Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a3becbd719cd569560b2698"
+    },
+    "title": "Bộ câu hỏi ôn tập 15",
+    "subject": "PRU212",
+    "teacherId": {
+      "$oid": "6a3bd5e1a47451cef123d873"
+    },
+    "xp": 100,
+    "status": "draft",
+    "questions": [
+      {
+        "questionText": "Câu hỏi 1 của bộ đề 15: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Giải thích chi tiết cho câu hỏi 1",
+        "_id": {
+          "$oid": "6a3becbdc3a2f822e6429169"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 2 của bộ đề 15: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Giải thích chi tiết cho câu hỏi 2",
+        "_id": {
+          "$oid": "6a3becbd29bc099d33c62cb6"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 3 của bộ đề 15: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Giải thích chi tiết cho câu hỏi 3",
+        "_id": {
+          "$oid": "6a3becbddf15f95143cb3653"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 4 của bộ đề 15: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Giải thích chi tiết cho câu hỏi 4",
+        "_id": {
+          "$oid": "6a3becbd9fc61dd8c46a9b8d"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 5 của bộ đề 15: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Giải thích chi tiết cho câu hỏi 5",
+        "_id": {
+          "$oid": "6a3becbdd53b97d739847a85"
+        }
+      }
+    ],
+    "plays": 92,
+    "deleted": false,
+    "createdAt": {
+      "$date": "2026-06-24T14:42:05.054Z"
+    },
+    "updatedAt": {
+      "$date": "2026-06-24T14:42:05.054Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a3becbda3e4ffb8e612e876"
+    },
+    "title": "Bộ câu hỏi ôn tập 16",
+    "subject": "SSL101c",
+    "teacherId": {
+      "$oid": "6a3bd5e1a47451cef123d873"
+    },
+    "xp": 50,
+    "status": "draft",
+    "questions": [
+      {
+        "questionText": "Câu hỏi 1 của bộ đề 16: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Giải thích chi tiết cho câu hỏi 1",
+        "_id": {
+          "$oid": "6a3becbd9ce98c14422064d9"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 2 của bộ đề 16: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Giải thích chi tiết cho câu hỏi 2",
+        "_id": {
+          "$oid": "6a3becbd990f334bc853453d"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 3 của bộ đề 16: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Giải thích chi tiết cho câu hỏi 3",
+        "_id": {
+          "$oid": "6a3becbd06787623adec5190"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 4 của bộ đề 16: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Giải thích chi tiết cho câu hỏi 4",
+        "_id": {
+          "$oid": "6a3becbd0ef6ff7fbd7b2e18"
+        }
+      }
+    ],
+    "plays": 89,
+    "deleted": false,
+    "createdAt": {
+      "$date": "2026-06-24T14:42:05.054Z"
+    },
+    "updatedAt": {
+      "$date": "2026-06-24T14:42:05.054Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a3becbd2153c4b844a4ade9"
+    },
+    "title": "Bộ câu hỏi ôn tập 17",
+    "subject": "SWP391",
+    "teacherId": {
+      "$oid": "6a3bd5e1a47451cef123d873"
+    },
+    "xp": 20,
+    "status": "draft",
+    "questions": [
+      {
+        "questionText": "Câu hỏi 1 của bộ đề 17: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Giải thích chi tiết cho câu hỏi 1",
+        "_id": {
+          "$oid": "6a3becbdfabfe1884cc8d3cb"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 2 của bộ đề 17: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Giải thích chi tiết cho câu hỏi 2",
+        "_id": {
+          "$oid": "6a3becbd076852bc9f14c4d4"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 3 của bộ đề 17: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Giải thích chi tiết cho câu hỏi 3",
+        "_id": {
+          "$oid": "6a3becbdb76ad3af59aba4ae"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 4 của bộ đề 17: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Giải thích chi tiết cho câu hỏi 4",
+        "_id": {
+          "$oid": "6a3becbdb0d09f183619aa4c"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 5 của bộ đề 17: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Giải thích chi tiết cho câu hỏi 5",
+        "_id": {
+          "$oid": "6a3becbdd72106183f252e5c"
+        }
+      }
+    ],
+    "plays": 65,
+    "deleted": false,
+    "createdAt": {
+      "$date": "2026-06-24T14:42:05.054Z"
+    },
+    "updatedAt": {
+      "$date": "2026-06-24T14:42:05.054Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a3becbd774b0b66ba5bc9c5"
+    },
+    "title": "Bộ câu hỏi ôn tập 18",
+    "subject": "SSL101c",
+    "teacherId": {
+      "$oid": "6a3bd5e1a47451cef123d873"
+    },
+    "xp": 40,
+    "status": "draft",
+    "questions": [
+      {
+        "questionText": "Câu hỏi 1 của bộ đề 18: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Giải thích chi tiết cho câu hỏi 1",
+        "_id": {
+          "$oid": "6a3becbde261b363d83dcf7f"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 2 của bộ đề 18: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Giải thích chi tiết cho câu hỏi 2",
+        "_id": {
+          "$oid": "6a3becbd558a9c8be897ddeb"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 3 của bộ đề 18: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Giải thích chi tiết cho câu hỏi 3",
+        "_id": {
+          "$oid": "6a3becbd97c779806da44f10"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 4 của bộ đề 18: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Giải thích chi tiết cho câu hỏi 4",
+        "_id": {
+          "$oid": "6a3becbd7ec2e683521db8ff"
+        }
+      }
+    ],
+    "plays": 91,
+    "deleted": false,
+    "createdAt": {
+      "$date": "2026-06-24T14:42:05.054Z"
+    },
+    "updatedAt": {
+      "$date": "2026-06-24T14:42:05.054Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a3becbdb3ee3d8cff869a9e"
+    },
+    "title": "Bộ câu hỏi ôn tập 19",
+    "subject": "SWP391",
+    "teacherId": {
+      "$oid": "6a3bd5e1a47451cef123d873"
+    },
+    "xp": 30,
+    "status": "public",
+    "questions": [
+      {
+        "questionText": "Câu hỏi 1 của bộ đề 19: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Giải thích chi tiết cho câu hỏi 1",
+        "_id": {
+          "$oid": "6a3becbd0a60fabd56e9ae51"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 2 của bộ đề 19: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Giải thích chi tiết cho câu hỏi 2",
+        "_id": {
+          "$oid": "6a3becbdacd4d4f018dff6a8"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 3 của bộ đề 19: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Giải thích chi tiết cho câu hỏi 3",
+        "_id": {
+          "$oid": "6a3becbdd8d0b030f1398199"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 4 của bộ đề 19: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Giải thích chi tiết cho câu hỏi 4",
+        "_id": {
+          "$oid": "6a3becbdf0dab6990b9a4541"
+        }
+      }
+    ],
+    "plays": 1,
+    "deleted": false,
+    "createdAt": {
+      "$date": "2026-06-24T14:42:05.054Z"
+    },
+    "updatedAt": {
+      "$date": "2026-06-24T14:42:05.054Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a3becbd53f4bdd9b13a7b6c"
+    },
+    "title": "Bộ câu hỏi ôn tập 20",
+    "subject": "SWP391",
+    "teacherId": {
+      "$oid": "6a3bd5e1a47451cef123d873"
+    },
+    "xp": 10,
+    "status": "draft",
+    "questions": [
+      {
+        "questionText": "Câu hỏi 1 của bộ đề 20: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Giải thích chi tiết cho câu hỏi 1",
+        "_id": {
+          "$oid": "6a3becbd7dff0d732789ec4a"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 2 của bộ đề 20: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Giải thích chi tiết cho câu hỏi 2",
+        "_id": {
+          "$oid": "6a3becbd6dd2900196a554de"
+        }
+      },
+      {
+        "questionText": "Câu hỏi 3 của bộ đề 20: Khái niệm cơ bản trong môn này là gì?",
+        "options": [
+          "Khái niệm A",
+          "Khái niệm B",
+          "Khái niệm C",
+          "Khái niệm D"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Giải thích chi tiết cho câu hỏi 3",
+        "_id": {
+          "$oid": "6a3becbdce177383883678c7"
+        }
+      }
+    ],
+    "plays": 18,
+    "deleted": false,
+    "createdAt": {
+      "$date": "2026-06-24T14:42:05.054Z"
+    },
+    "updatedAt": {
+      "$date": "2026-06-24T14:42:05.054Z"
+    },
+    "__v": 0
+  }
+]

@@ -5,24 +5,25 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, BookOpen, CalendarDays, CalendarClock,
   Users, Trophy, ShoppingBag, UserCircle2, Settings,
-  TrendingUp, ChevronsLeft, ChevronsRight
+  TrendingUp, ChevronsLeft, ChevronsRight, FileQuestion
 } from "lucide-react";
+
+const navItems = [
+  { id: "/student/dashboard", label: "Tổng quan", icon: LayoutDashboard },
+  { id: "/student/course", label: "Khóa học", icon: BookOpen },
+  { id: "/student/quizzes", label: "Câu hỏi kỹ năng", icon: FileQuestion },
+  { id: "/student/time-table", label: "Lịch học", icon: CalendarDays },
+  { id: "/student/deadline", label: "Deadline", icon: CalendarClock },
+  { id: "/student/groups", label: "Nhóm học tập", icon: Users },
+  { id: "/student/leaderboard", label: "Bảng xếp hạng", icon: Trophy },
+  { id: "/student/shop", label: "Cửa hàng XP", icon: ShoppingBag },
+  { id: "/student/profile", label: "Hồ sơ", icon: UserCircle2 },
+  { id: "/student/settings", label: "Cài đặt", icon: Settings },
+];
 
 export function Sidebar() {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
-
-  const navItems = [
-    { id: "/student/dashboard", label: "Tổng quan", icon: LayoutDashboard },
-    { id: "/student/course", label: "Khóa học", icon: BookOpen },
-    { id: "/student/time-table", label: "Lịch học", icon: CalendarDays },
-    { id: "/student/deadline", label: "Deadline", icon: CalendarClock },
-    { id: "/student/groups", label: "Nhóm học tập", icon: Users },
-    { id: "/student/leaderboard", label: "Bảng xếp hạng", icon: Trophy },
-    { id: "/student/shop", label: "Cửa hàng XP", icon: ShoppingBag },
-    { id: "/student/profile", label: "Hồ sơ", icon: UserCircle2 },
-    { id: "/student/settings", label: "Cài đặt", icon: Settings },
-  ];
 
   const SHADOW_SM = "4px 4px 0px 0px rgba(0,0,0,1)";
 

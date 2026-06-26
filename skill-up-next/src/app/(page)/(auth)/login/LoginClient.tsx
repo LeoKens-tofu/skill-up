@@ -1,50 +1,106 @@
 'use client';
 import { useRouter } from 'next/navigation';
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Sun, Moon, User, Lock, Eye, EyeOff, TrendingUp } from "lucide-react";
-
-
+// @ts-expect-error just-validate types are broken in Next.js
+import JustValidate from 'just-validate';
+import { toast } from 'sonner';
 
 export default function App() {
   const [view, setView] = useState<"login" | "home">("login");
   const [activeTab, setActiveTab] = useState<"student" | "teacher">("student");
   const [showPassword, setShowPassword] = useState(false);
-  const [isDark, setIsDark] = useState(true);
-
+  const [isLoading, setIsLoading] = useState(false);
   
   const router = useRouter();
-  if (view === "home") {
-    router.push("/student/dashboard");
-    return null;
-  }
+  const formRef = useRef<HTMLFormElement>(null);
+  const validatorRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (view === "home") {
+      router.push(activeTab === "student" ? "/student/dashboard" : "/teacher/dashboard");
+    }
+  }, [view, router, activeTab]);
+
+  useEffect(() => {
+    if (!formRef.current) return;
+
+    if (validatorRef.current) {
+      validatorRef.current.destroy();
+    }
+
+    validatorRef.current = new JustValidate(formRef.current, {
+      validateBeforeSubmitting: true,
+    });
+
+    if (activeTab === "teacher") {
+      validatorRef.current.addField('#loginId', [
+        { rule: 'required', errorMessage: 'Email không được để trống' },
+        { rule: 'email', errorMessage: 'Email không hợp lệ' },
+      ]);
+    } else {
+      validatorRef.current.addField('#loginId', [
+        { rule: 'required', errorMessage: 'Tài khoản không được để trống' },
+      ]);
+    }
+
+    validatorRef.current
+      .addField('#password', [
+        { rule: 'required', errorMessage: 'Mật khẩu không được để trống' },
+      ])
+      .onSuccess(async (event: any) => {
+        event.preventDefault();
+        const loginId = (document.getElementById('loginId') as HTMLInputElement).value;
+        const password = (document.getElementById('password') as HTMLInputElement).value;
+
+        try {
+          setIsLoading(true);
+          const response = await fetch("http://localhost:4000/api/client/auth/login", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify({
+              loginId,
+              password,
+              role: activeTab
+            })
+          });
+
+          const data = await response.json();
+          if (data.code === "success") {
+            toast.success(data.message);
+            setView("home");
+          } else {
+            toast.error(data.message || "Đăng nhập thất bại");
+          }
+        } catch (error) {
+          toast.error("Lỗi kết nối máy chủ");
+        } finally {
+          setIsLoading(false);
+        }
+      });
+
+    return () => {
+      if (validatorRef.current) validatorRef.current.destroy();
+    }
+  }, [activeTab]);
 
 
-  // Harmonious theme palette
-  const theme = isDark
-    ? {
-        pageBg: "#0A1628",
-        panelBg: "#0A1628",
-        text: "#FFF8F0",
-        subText: "rgba(255,248,240,0.75)",
-        inputBg: "#11203A",
-        inputText: "#FFF8F0",
-        inputPlaceholder: "rgba(255,248,240,0.4)",
-        border: "#000000",
-        segBg: "#11203A",
-        segText: "#FFF8F0",
-      }
-    : {
-        pageBg: "#FFF8F0",
-        panelBg: "#FFF8F0",
-        text: "#0A1628",
-        subText: "rgba(10,22,40,0.7)",
-        inputBg: "#FFFFFF",
-        inputText: "#0A1628",
-        inputPlaceholder: "rgba(10,22,40,0.4)",
-        border: "#000000",
-        segBg: "#FFF8F0",
-        segText: "#0A1628",
-      };
+  // Harmonious theme palette (Light Mode)
+  const theme = {
+    pageBg: "#FFF8F0",
+    panelBg: "#FFF8F0",
+    text: "#0A1628",
+    subText: "rgba(10,22,40,0.7)",
+    inputBg: "#FFFFFF",
+    inputText: "#0A1628",
+    inputPlaceholder: "rgba(10,22,40,0.4)",
+    border: "#000000",
+    segBg: "#FFF8F0",
+    segText: "#0A1628",
+  };
 
   const placeholder =
     activeTab === "student" ? "VD: DE170001" : "VD: giang.vien@fpt.edu.vn";
@@ -54,7 +110,10 @@ export default function App() {
   return (
     <div
       className="min-h-screen flex transition-colors duration-500"
-      style={{ backgroundColor: theme.pageBg }}
+      style={{ 
+        backgroundColor: theme.pageBg,
+        colorScheme: "light" 
+      }}
     >
       {/* Left Panel - with background image */}
       <div
@@ -157,22 +216,7 @@ export default function App() {
       {/* Right Panel - no card frame */}
       <div className="w-[45%] flex items-center justify-center px-16 py-10 transition-colors duration-500">
         <div className="w-full max-w-md">
-          {/* Theme Toggle */}
-          <div className="flex justify-end mb-10">
-            <button
-              onClick={() => setIsDark((v) => !v)}
-              className="border-[3px] border-black px-4 py-2 flex items-center gap-2 font-sans transition-all duration-150 hover:-translate-y-0.5 hover:-translate-x-0.5 active:translate-x-1 active:translate-y-1"
-              style={{
-                backgroundColor: isDark ? "#11203A" : "#FFF8F0",
-                color: theme.text,
-                boxShadow: "4px 4px 0px 0px rgba(0,0,0,1)",
-                fontWeight: 500,
-              }}
-            >
-              {isDark ? <Moon size={18} /> : <Sun size={18} />}
-              <span>{isDark ? "Tối" : "Sáng"}</span>
-            </button>
-          </div>
+          {/* Remove Theme Toggle */}
 
           {/* Title */}
           <div className="mb-8">
@@ -222,7 +266,7 @@ export default function App() {
           </div>
 
           {/* Fields */}
-          <div className="space-y-5 mb-6">
+          <form ref={formRef} className="space-y-5 mb-6">
             <div>
               <label
                 className="font-sans mb-2 block"
@@ -239,15 +283,16 @@ export default function App() {
               >
                 <User size={20} style={{ color: theme.inputText }} className="mr-3" />
                 <input
+                  id="loginId"
                   type="text"
                   placeholder={placeholder}
                   className="flex-1 bg-transparent outline-none font-sans"
-                  style={{
+                  style={({
                     color: theme.inputText,
                     fontWeight: 400,
-                    // @ts-expect-error CSS var for placeholder
                     "--ph": theme.inputPlaceholder,
-                  }}
+                    "--input-text-color": theme.inputText,
+                  } as React.CSSProperties)}
                 />
               </div>
             </div>
@@ -277,10 +322,16 @@ export default function App() {
               >
                 <Lock size={20} style={{ color: theme.inputText }} className="mr-3" />
                 <input
+                  id="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="Nhập mật khẩu"
                   className="flex-1 bg-transparent outline-none font-sans"
-                  style={{ color: theme.inputText, fontWeight: 400 }}
+                  style={({ 
+                    color: theme.inputText, 
+                    fontWeight: 400,
+                    "--ph": theme.inputPlaceholder,
+                    "--input-text-color": theme.inputText,
+                  } as React.CSSProperties)}
                 />
                 <button
                   onClick={() => setShowPassword(!showPassword)}
@@ -291,12 +342,11 @@ export default function App() {
                 </button>
               </div>
             </div>
-          </div>
-
           {/* CTA */}
           <button
-            onClick={() => setView("home")}
-            className="w-full bg-[#FF6B35] border-[4px] border-black py-4 font-sans text-white mb-6 transition-all duration-150 hover:-translate-y-0.5 hover:-translate-x-0.5 active:translate-x-1 active:translate-y-1"
+            type="submit"
+            disabled={isLoading}
+            className="w-full bg-[#FF6B35] border-[4px] border-black py-4 font-sans text-white mb-6 transition-all duration-150 hover:-translate-y-0.5 hover:-translate-x-0.5 active:translate-x-1 active:translate-y-1 disabled:opacity-50"
             style={{
               boxShadow: "6px 6px 0px 0px rgba(255,107,53,0.9)",
               fontWeight: 700,
@@ -318,8 +368,9 @@ export default function App() {
                 "9px 9px 0px 0px rgba(255,107,53,1)")
             }
           >
-            Đăng nhập
+            {isLoading ? "Đang xử lý..." : "Đăng nhập"}
           </button>
+          </form>
 
           {/* Divider */}
           <div className="flex items-center gap-4 mb-6">
@@ -376,7 +427,7 @@ export default function App() {
           >
             Mới tham gia Skill Up?{" "}
             <a
-              href="#"
+              href="/register"
               className="text-[#FF6B35] hover:underline"
               style={{ fontWeight: 600 }}
             >

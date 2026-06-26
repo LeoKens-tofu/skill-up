@@ -36,162 +36,111 @@ type HomeProps = {
 const SHADOW = "6px 6px 0px 0px rgba(0,0,0,1)";
 const SHADOW_SM = "4px 4px 0px 0px rgba(0,0,0,1)";
 
-export default function Overview({ isDark = false }: { isDark?: boolean }) {
-  const [active, setActive] = useState<
-    "overview" | "courses" | "deadlines" | "profile" | "settings" | "leaderboard" | "calendar" | "groups" | "shop"
-  >("overview");
-  const [selectedCourse, setSelectedCourse] = useState<any | null>(null);
+const stats = [
+  {
+    label: "Bài tập chưa nộp",
+    value: "5",
+    sub: "Cần xử lý ngay",
+    icon: FileWarning,
+    bg: "#FFE4D6",
+    accent: "#C2410C",
+    iconBg: "#FF6B35",
+  },
+  {
+    label: "Điểm GPA",
+    value: "3.42",
+    sub: "Học kỳ Spring 2026",
+    icon: GraduationCap,
+    bg: "#FFF8F0",
+    accent: "#0A1628",
+    iconBg: "#FFF8F0",
+  },
+  {
+    label: "Chuỗi học liên tục",
+    value: "14",
+    sub: "Ngày liên tiếp",
+    icon: Flame,
+    bg: "#FFF8F0",
+    accent: "#0A1628",
+    iconBg: "#FFF8F0",
+  },
+  {
+    label: "Tổng điểm XP",
+    value: "2,450",
+    sub: "Cấp 12 — Học giả",
+    icon: Trophy,
+    bg: "#FFF8F0",
+    accent: "#0A1628",
+    iconBg: "#FFF8F0",
+  },
+];
 
-  const [collapsed, setCollapsed] = useState(false);
-  const [chatOpen, setChatOpen] = useState(false);
-  const [notifOpen, setNotifOpen] = useState(false);
-  const [notifications, setNotifications] = useState([
-    { id: 1, icon: "deadline", title: "Deadline sắp tới: Bài tập lớn SWP391", time: "2 giờ nữa", unread: true },
-    { id: 2, icon: "xp", title: "Bạn vừa nhận được +50 XP từ Quiz Chương 3", time: "1 giờ trước", unread: true },
-    { id: 3, icon: "rank", title: "Bạn đã lên hạng #2 toàn trường! 🎉", time: "3 giờ trước", unread: true },
-    { id: 4, icon: "course", title: "Khóa học mới: React Server Components đã mở", time: "Hôm qua", unread: false },
-    { id: 5, icon: "badge", title: "Đạt huy hiệu Streak 14 ngày", time: "2 ngày trước", unread: false },
-  ]);
-  const unreadCount = notifications.filter((n) => n.unread).length;
-  const [chatInput, setChatInput] = useState("");
-  const [chatMessages, setChatMessages] = useState<
-    { role: "user" | "ai"; text: string }[]
-  >([
-    {
-      role: "ai",
-      text: "Xin chào Hoài Nam! Tôi là trợ lý AI của Skill Up. Bạn cần giúp gì hôm nay — ôn tập, gợi ý khóa học, hay nhắc deadline?",
-    },
-  ]);
-  const sendChat = () => {
-    const t = chatInput.trim();
-    if (!t) return;
-    setChatMessages((m) => [
-      ...m,
-      { role: "user", text: t },
-      {
-        role: "ai",
-        text: "Mình đã ghi nhận yêu cầu. Tính năng AI đầy đủ sẽ sớm cập nhật — hãy giữ chuỗi học hằng ngày nhé!",
-      },
-    ]);
-    setChatInput("");
-  };
+const deadlines = [
+  {
+    title: "Bài tập lớn — Lập trình Web",
+    course: "SWP391",
+    due: "2 ngày nữa",
+    status: "Chưa nộp",
+    urgent: true,
+  },
+  {
+    title: "Quiz Chương 4 — CSDL",
+    course: "DBI202",
+    due: "5 ngày nữa",
+    status: "Đang làm",
+    urgent: false,
+  },
+  {
+    title: "Báo cáo nhóm — Kỹ năng mềm",
+    course: "SSL101c",
+    due: "1 tuần nữa",
+    status: "Chưa bắt đầu",
+    urgent: false,
+  },
+  {
+    title: "Thuyết trình cuối kỳ — UI/UX",
+    course: "PRU212",
+    due: "12 ngày nữa",
+    status: "Chưa bắt đầu",
+    urgent: false,
+  },
+];
 
-  const navItems = [
-    { id: "overview" as const, label: "Tổng quan", icon: LayoutDashboard },
-    { id: "courses" as const, label: "Khóa học", icon: BookOpen },
-    { id: "calendar" as const, label: "Lịch học", icon: CalendarDays },
-    { id: "deadlines" as const, label: "Deadline", icon: CalendarClock },
-    { id: "groups" as const, label: "Nhóm học tập", icon: Users },
-    { id: "leaderboard" as const, label: "Bảng xếp hạng", icon: Trophy },
-    { id: "shop" as const, label: "Cửa hàng XP", icon: ShoppingBag },
-    { id: "profile" as const, label: "Hồ sơ", icon: UserCircle2 },
-    { id: "settings" as const, label: "Cài đặt", icon: Settings },
-  ];
+const activities = [
+  {
+    icon: CheckCircle2,
+    title: "Hoàn thành quiz Chương 3",
+    sub: "DBI202 · +50 XP",
+    time: "2 giờ trước",
+  },
+  {
+    icon: Award,
+    title: "Đạt huy hiệu Streak 14 ngày",
+    sub: "Tiếp tục giữ vững!",
+    time: "Hôm qua",
+  },
+  {
+    icon: BookOpen,
+    title: "Bắt đầu khóa React Nâng cao",
+    sub: "Tiến độ 12%",
+    time: "2 ngày trước",
+  },
+  {
+    icon: Sparkles,
+    title: "Lên cấp 12 — Học giả",
+    sub: "+1 cấp độ",
+    time: "3 ngày trước",
+  },
+];
 
-  const stats = [
-    {
-      label: "Bài tập chưa nộp",
-      value: "5",
-      sub: "Cần xử lý ngay",
-      icon: FileWarning,
-      bg: "#FFE4D6",
-      accent: "#C2410C",
-      iconBg: "#FF6B35",
-    },
-    {
-      label: "Điểm GPA",
-      value: "3.42",
-      sub: "Học kỳ Spring 2026",
-      icon: GraduationCap,
-      bg: "#FFF8F0",
-      accent: "#0A1628",
-      iconBg: "#FFF8F0",
-    },
-    {
-      label: "Chuỗi học liên tục",
-      value: "14",
-      sub: "Ngày liên tiếp",
-      icon: Flame,
-      bg: "#FFF8F0",
-      accent: "#0A1628",
-      iconBg: "#FFF8F0",
-    },
-    {
-      label: "Tổng điểm XP",
-      value: "2,450",
-      sub: "Cấp 12 — Học giả",
-      icon: Trophy,
-      bg: "#FFF8F0",
-      accent: "#0A1628",
-      iconBg: "#FFF8F0",
-    },
-  ];
+const courses = [
+  { code: "SWP391", name: "Lập trình Web", progress: 78, color: "#FF6B35" },
+  { code: "DBI202", name: "Cơ sở dữ liệu", progress: 62, color: "#0A1628" },
+  { code: "PRU212", name: "Thiết kế UI/UX", progress: 45, color: "#FF6B35" },
+  { code: "SSL101c", name: "Kỹ năng mềm", progress: 90, color: "#0A1628" },
+];
 
-  const deadlines = [
-    {
-      title: "Bài tập lớn — Lập trình Web",
-      course: "SWP391",
-      due: "2 ngày nữa",
-      status: "Chưa nộp",
-      urgent: true,
-    },
-    {
-      title: "Quiz Chương 4 — CSDL",
-      course: "DBI202",
-      due: "5 ngày nữa",
-      status: "Đang làm",
-      urgent: false,
-    },
-    {
-      title: "Báo cáo nhóm — Kỹ năng mềm",
-      course: "SSL101c",
-      due: "1 tuần nữa",
-      status: "Chưa bắt đầu",
-      urgent: false,
-    },
-    {
-      title: "Thuyết trình cuối kỳ — UI/UX",
-      course: "PRU212",
-      due: "12 ngày nữa",
-      status: "Chưa bắt đầu",
-      urgent: false,
-    },
-  ];
-
-  const activities = [
-    {
-      icon: CheckCircle2,
-      title: "Hoàn thành quiz Chương 3",
-      sub: "DBI202 · +50 XP",
-      time: "2 giờ trước",
-    },
-    {
-      icon: Award,
-      title: "Đạt huy hiệu Streak 14 ngày",
-      sub: "Tiếp tục giữ vững!",
-      time: "Hôm qua",
-    },
-    {
-      icon: BookOpen,
-      title: "Bắt đầu khóa React Nâng cao",
-      sub: "Tiến độ 12%",
-      time: "2 ngày trước",
-    },
-    {
-      icon: Sparkles,
-      title: "Lên cấp 12 — Học giả",
-      sub: "+1 cấp độ",
-      time: "3 ngày trước",
-    },
-  ];
-
-  const courses = [
-    { code: "SWP391", name: "Lập trình Web", progress: 78, color: "#FF6B35" },
-    { code: "DBI202", name: "Cơ sở dữ liệu", progress: 62, color: "#0A1628" },
-    { code: "PRU212", name: "Thiết kế UI/UX", progress: 45, color: "#FF6B35" },
-    { code: "SSL101c", name: "Kỹ năng mềm", progress: 90, color: "#0A1628" },
-  ];
-
+export default function Overview() {
   return (
     <>
         {/* Greeting Banner */}
@@ -331,7 +280,7 @@ export default function Overview({ isDark = false }: { isDark?: boolean }) {
 
           return (
             <div
-              className="border-[4px] border-black bg-[#FFF8F0] dark:bg-[#11203A] mb-8"
+              className="border-[4px] border-black bg-[#FFF8F0] mb-8"
               style={{ boxShadow: SHADOW }}
             >
               <div className="flex items-center justify-between px-6 py-4 border-b-[3px] border-black">
@@ -343,13 +292,13 @@ export default function Overview({ isDark = false }: { isDark?: boolean }) {
                   </div>
                   <div>
                     <h3
-                      className="font-serif text-[#0A1628] dark:text-[#FFF8F0] leading-tight"
+                      className="font-serif text-[#0A1628] leading-tight"
                       style={{ fontWeight: 700, fontSize: "1.25rem" }}
                     >
                       Chuỗi hoạt động
                     </h3>
                     <p
-                      className="font-sans text-xs text-[#0A1628]/60 dark:text-[#FFF8F0]/60"
+                      className="font-sans text-xs text-[#0A1628]/60"
                       style={{ fontWeight: 500 }}
                     >
                       Đăng nhập mỗi ngày để tăng 1 nấc
@@ -378,7 +327,7 @@ export default function Overview({ isDark = false }: { isDark?: boolean }) {
               <div className="px-12 pt-12 pb-6">
                 {/* Progress track with markers */}
                 <div className="relative px-8">
-                  <div className="relative h-3 border-[3px] border-black bg-white dark:bg-[#11203A]">
+                  <div className="relative h-3 border-[3px] border-black bg-white">
                     <div
                       className="h-full bg-[#FF6B35] transition-all duration-500"
                       style={{ width: `${progressPct}%` }}
@@ -397,22 +346,14 @@ export default function Overview({ isDark = false }: { isDark?: boolean }) {
                           <div
                             className="w-14 h-14 border-[4px] border-black flex items-center justify-center transition-transform duration-150 hover:-translate-y-1"
                             style={{
-                              backgroundColor: reached
-                                ? "#FF6B35"
-                                : isDark
-                                ? "#11203A"
-                                : "#FFF8F0",
+                              backgroundColor: reached ? "#FF6B35" : "#FFF8F0",
                               boxShadow: SHADOW_SM,
                             }}
                           >
                             <Flame
                               size={26}
                               style={{
-                                color: reached
-                                  ? "#FFFFFF"
-                                  : isDark
-                                  ? "rgba(255,248,240,0.5)"
-                                  : "rgba(10,22,40,0.4)",
+                                color: reached ? "#FFFFFF" : "rgba(10,22,40,0.4)",
                               }}
                               fill={reached ? "white" : "none"}
                             />
@@ -434,13 +375,13 @@ export default function Overview({ isDark = false }: { isDark?: boolean }) {
                           style={{ left: `${pos}%` }}
                         >
                           <span
-                            className="font-serif text-[#0A1628] dark:text-[#FFF8F0]"
+                            className="font-serif text-[#0A1628]"
                             style={{ fontWeight: 700, fontSize: "1.1rem" }}
                           >
                             {m.day} ngày
                           </span>
                           <span
-                            className="font-sans text-xs uppercase tracking-wider text-[#0A1628]/60 dark:text-[#FFF8F0]/60"
+                            className="font-sans text-xs uppercase tracking-wider text-[#0A1628]/60"
                             style={{ fontWeight: 600 }}
                           >
                             {m.label}
@@ -449,7 +390,7 @@ export default function Overview({ isDark = false }: { isDark?: boolean }) {
                             className="font-sans text-xs mt-1.5 px-2 py-0.5 border-[2px] border-black"
                             style={{
                               fontWeight: 700,
-                              backgroundColor: reached ? "#0A1628" : (isDark ? "#11203A" : "#FFF8F0"),
+                              backgroundColor: reached ? "#0A1628" : "#FFF8F0",
                               color: reached ? "#FF6B35" : "#0A1628",
                             }}
                           >
@@ -479,107 +420,71 @@ export default function Overview({ isDark = false }: { isDark?: boolean }) {
           );
         })()}
 
-        {/* Quick actions */}
-        <QuickActions isDark={isDark} />
+        <QuickActions />
 
         {/* Stat cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
           {stats.map((s) => {
             const Icon = s.icon;
-            return (() => {
-                const cardBg =
-                  s.bg === "#FFF8F0"
-                    ? isDark
-                      ? "#11203A"
-                      : "#FFF8F0"
-                    : s.bg === "#FFE4D6" && isDark
-                    ? "#3A1A10"
-                    : s.bg;
-                const iconBg =
-                  s.iconBg === "#FFF8F0"
-                    ? isDark
-                      ? "#0A1628"
-                      : "#FFF8F0"
-                    : s.iconBg;
-                const mainText =
-                  s.accent === "#0A1628" && isDark
-                    ? "#FFF8F0"
-                    : s.accent === "#C2410C" && isDark
-                    ? "#FFB088"
-                    : s.accent;
-                const mutedText =
-                  s.accent === "#0A1628"
-                    ? isDark
-                      ? "#FFF8F0AA"
-                      : "#0A162899"
-                    : s.accent === "#C2410C" && isDark
-                    ? "#FFB088CC"
-                    : `${s.accent}99`;
-                return (
+            const mainText = s.accent;
+            const mutedText = `${s.accent}99`;
+            
+            return (
+              <div
+                key={s.label}
+                className="border-[4px] border-black p-5 transition-all duration-150 hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[9px_9px_0px_0px_rgba(0,0,0,1)] cursor-default"
+                style={{
+                  backgroundColor: s.bg,
+                  boxShadow: SHADOW,
+                }}
+              >
+                <div className="flex items-start justify-between mb-4">
                   <div
-                    key={s.label}
-                    className="border-[4px] border-black p-5 transition-all duration-150 hover:-translate-y-1 hover:-translate-x-1 cursor-default"
-                    style={{
-                      backgroundColor: cardBg,
-                      boxShadow: SHADOW,
-                    }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.boxShadow =
-                        "9px 9px 0px 0px rgba(0,0,0,1)")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.boxShadow = SHADOW)
-                    }
+                    className="w-11 h-11 border-[3px] border-black flex items-center justify-center"
+                    style={{ backgroundColor: s.iconBg }}
                   >
-                    <div className="flex items-start justify-between mb-4">
-                      <div
-                        className="w-11 h-11 border-[3px] border-black flex items-center justify-center"
-                        style={{ backgroundColor: iconBg }}
-                      >
-                        <Icon
-                          size={22}
-                          style={{
-                            color:
-                              s.iconBg === "#FF6B35" ? "#FFFFFF" : "#FF6B35",
-                          }}
-                        />
-                      </div>
-                      <span
-                        className="font-sans text-xs uppercase tracking-wider px-2 py-1 border-[2px] border-black"
-                        style={{
-                          fontWeight: 700,
-                          color: mainText,
-                          backgroundColor: isDark ? "#0A1628" : "#FFF8F0",
-                        }}
-                      >
-                        {s.sub.split(" ")[0]}
-                      </span>
-                    </div>
-                    <p
-                      className="font-serif mb-1"
+                    <Icon
+                      size={22}
                       style={{
-                        fontWeight: 700,
-                        fontSize: "2.25rem",
-                        color: mainText,
+                        color: s.iconBg === "#FF6B35" ? "#FFFFFF" : "#FF6B35",
                       }}
-                    >
-                      {s.value}
-                    </p>
-                    <p
-                      className="font-sans text-sm"
-                      style={{ fontWeight: 600, color: mainText }}
-                    >
-                      {s.label}
-                    </p>
-                    <p
-                      className="font-sans text-xs mt-1"
-                      style={{ fontWeight: 500, color: mutedText }}
-                    >
-                      {s.sub}
-                    </p>
+                    />
                   </div>
-                );
-              })();
+                  <span
+                    className="font-sans text-xs uppercase tracking-wider px-2 py-1 border-[2px] border-black"
+                    style={{
+                      fontWeight: 700,
+                      color: mainText,
+                      backgroundColor: "#FFF8F0",
+                    }}
+                  >
+                    {s.sub.split(" ")[0]}
+                  </span>
+                </div>
+                <p
+                  className="font-serif mb-1"
+                  style={{
+                    fontWeight: 700,
+                    fontSize: "2.25rem",
+                    color: mainText,
+                  }}
+                >
+                  {s.value}
+                </p>
+                <p
+                  className="font-sans text-sm"
+                  style={{ fontWeight: 600, color: mainText }}
+                >
+                  {s.label}
+                </p>
+                <p
+                  className="font-sans text-xs mt-1"
+                  style={{ fontWeight: 500, color: mutedText }}
+                >
+                  {s.sub}
+                </p>
+              </div>
+            );
           })}
         </div>
 
@@ -587,14 +492,14 @@ export default function Overview({ isDark = false }: { isDark?: boolean }) {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           {/* Deadlines */}
           <div
-            className="border-[4px] border-black bg-[#FFF8F0] dark:bg-[#11203A] flex flex-col"
+            className="border-[4px] border-black bg-[#FFF8F0] flex flex-col"
             style={{ boxShadow: SHADOW, height: "440px" }}
           >
             <div className="flex items-center justify-between px-6 py-4 border-b-[3px] border-black">
               <div className="flex items-center gap-2">
                 <CalendarClock size={22} className="text-[#0A1628] dark:text-[#FFF8F0]" />
                 <h3
-                  className="font-serif text-[#0A1628] dark:text-[#FFF8F0]"
+                  className="font-serif text-[#0A1628]"
                   style={{ fontWeight: 700, fontSize: "1.25rem" }}
                 >
                   Deadline sắp tới
@@ -612,18 +517,18 @@ export default function Overview({ isDark = false }: { isDark?: boolean }) {
               {deadlines.map((d) => (
                 <div
                   key={d.title}
-                  className="border-[3px] border-black bg-white dark:bg-[#11203A] p-4 flex items-center justify-between transition-all duration-150 hover:-translate-y-0.5 hover:-translate-x-0.5"
+                  className="border-[3px] border-black bg-white p-4 flex items-center justify-between transition-all duration-150 hover:-translate-y-0.5 hover:-translate-x-0.5"
                   style={{ boxShadow: SHADOW_SM }}
                 >
                   <div className="flex-1 min-w-0">
                     <p
-                      className="font-sans text-[#0A1628] dark:text-[#FFF8F0] truncate"
+                      className="font-sans text-[#0A1628] truncate"
                       style={{ fontWeight: 700 }}
                     >
                       {d.title}
                     </p>
                     <p
-                      className="font-sans text-xs text-[#0A1628]/60 dark:text-[#FFF8F0]/60 mt-0.5"
+                      className="font-sans text-xs text-[#0A1628]/60 mt-0.5"
                       style={{ fontWeight: 500 }}
                     >
                       {d.course} · {d.status}
@@ -660,14 +565,14 @@ export default function Overview({ isDark = false }: { isDark?: boolean }) {
 
           {/* Activity */}
           <div
-            className="border-[4px] border-black bg-[#FFF8F0] dark:bg-[#11203A] flex flex-col"
+            className="border-[4px] border-black bg-[#FFF8F0] flex flex-col"
             style={{ boxShadow: SHADOW, height: "440px" }}
           >
             <div className="flex items-center justify-between px-6 py-4 border-b-[3px] border-black">
               <div className="flex items-center gap-2">
                 <Clock size={22} className="text-[#0A1628] dark:text-[#FFF8F0]" />
                 <h3
-                  className="font-serif text-[#0A1628] dark:text-[#FFF8F0]"
+                  className="font-serif text-[#0A1628]"
                   style={{ fontWeight: 700, fontSize: "1.25rem" }}
                 >
                   Hoạt động gần đây
@@ -687,7 +592,7 @@ export default function Overview({ isDark = false }: { isDark?: boolean }) {
                 return (
                   <div
                     key={a.title}
-                    className="border-[3px] border-black bg-white dark:bg-[#11203A] p-4 flex items-center gap-3 transition-all duration-150 hover:-translate-y-0.5 hover:-translate-x-0.5"
+                    className="border-[3px] border-black bg-white p-4 flex items-center gap-3 transition-all duration-150 hover:-translate-y-0.5 hover:-translate-x-0.5"
                     style={{ boxShadow: SHADOW_SM }}
                   >
                     <div
@@ -697,20 +602,20 @@ export default function Overview({ isDark = false }: { isDark?: boolean }) {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p
-                        className="font-sans text-[#0A1628] dark:text-[#FFF8F0] truncate"
+                        className="font-sans text-[#0A1628] truncate"
                         style={{ fontWeight: 700 }}
                       >
                         {a.title}
                       </p>
                       <p
-                        className="font-sans text-xs text-[#0A1628]/60 dark:text-[#FFF8F0]/60 mt-0.5"
+                        className="font-sans text-xs text-[#0A1628]/60 mt-0.5"
                         style={{ fontWeight: 500 }}
                       >
                         {a.sub}
                       </p>
                     </div>
                     <span
-                      className="font-sans text-xs text-[#0A1628]/60 dark:text-[#FFF8F0]/60 flex-shrink-0"
+                      className="font-sans text-xs text-[#0A1628]/60 flex-shrink-0"
                       style={{ fontWeight: 500 }}
                     >
                       {a.time}
@@ -724,14 +629,14 @@ export default function Overview({ isDark = false }: { isDark?: boolean }) {
 
         {/* Courses */}
         <div
-          className="border-[4px] border-black bg-[#FFF8F0] dark:bg-[#11203A]"
+          className="border-[4px] border-black bg-[#FFF8F0]"
           style={{ boxShadow: SHADOW }}
         >
           <div className="flex items-center justify-between px-6 py-4 border-b-[3px] border-black">
             <div className="flex items-center gap-2">
               <BookOpen size={22} className="text-[#0A1628] dark:text-[#FFF8F0]" />
               <h3
-                className="font-serif text-[#0A1628] dark:text-[#FFF8F0]"
+                className="font-serif text-[#0A1628]"
                 style={{ fontWeight: 700, fontSize: "1.25rem" }}
               >
                 Khóa học đang học
@@ -749,32 +654,32 @@ export default function Overview({ isDark = false }: { isDark?: boolean }) {
             {courses.map((c) => (
               <div
                 key={c.code}
-                className="border-[3px] border-black bg-white dark:bg-[#11203A] p-4 transition-all duration-150 hover:-translate-y-0.5 hover:-translate-x-0.5"
+                className="border-[3px] border-black bg-white p-4 transition-all duration-150 hover:-translate-y-0.5 hover:-translate-x-0.5"
                 style={{ boxShadow: SHADOW_SM }}
               >
                 <div className="flex items-center justify-between mb-3">
                   <div>
                     <p
-                      className="font-sans text-xs uppercase tracking-wider text-[#0A1628]/60 dark:text-[#FFF8F0]/60"
+                      className="font-sans text-xs uppercase tracking-wider text-[#0A1628]/60"
                       style={{ fontWeight: 700 }}
                     >
                       {c.code}
                     </p>
                     <p
-                      className="font-sans text-[#0A1628] dark:text-[#FFF8F0]"
+                      className="font-sans text-[#0A1628]"
                       style={{ fontWeight: 700, fontSize: "1.05rem" }}
                     >
                       {c.name}
                     </p>
                   </div>
                   <span
-                    className="font-serif text-[#0A1628] dark:text-[#FFF8F0]"
+                    className="font-serif text-[#0A1628]"
                     style={{ fontWeight: 700, fontSize: "1.5rem" }}
                   >
                     {c.progress}%
                   </span>
                 </div>
-                <div className="w-full h-4 border-[2px] border-black bg-[#FFF8F0] dark:bg-[#11203A] overflow-hidden">
+                <div className="w-full h-4 border-[2px] border-black bg-[#FFF8F0] overflow-hidden">
                   <div
                     className="h-full"
                     style={{
