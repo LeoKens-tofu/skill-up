@@ -37,7 +37,7 @@ export default function QuizzesManagementPage() {
         status,
         subject
       });
-      const res = await fetch(`http://localhost:4000/api/client/teacher/quizzes?${query}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/client/teacher/quizzes?${query}`, {
         credentials: "include"
       });
       const json = await res.json();
@@ -64,7 +64,7 @@ export default function QuizzesManagementPage() {
   const handleDelete = async (id: string) => {
     const loadingToast = toast.loading("Đang xóa...");
     try {
-      const res = await fetch(`http://localhost:4000/api/client/teacher/quizzes/${id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/client/teacher/quizzes/${id}`, {
         method: "DELETE",
         credentials: "include"
       });

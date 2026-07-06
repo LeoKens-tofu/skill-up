@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
+import type { LucideIcon } from "lucide-react";
 import {
   Pencil,
   Crown,
@@ -27,6 +28,22 @@ import {
   X
 } from "lucide-react";
 
+interface StudentProfile {
+  fullName: string;
+  studentId: string;
+  email: string;
+  avatar?: string;
+  xp?: number;
+  level?: number;
+  title?: string;
+}
+
+interface Skill {
+  skill: string;
+  value: number;
+  icon: LucideIcon;
+}
+
 const SHADOW = "6px 6px 0px 0px rgba(0,0,0,1)";
 const SHADOW_SM = "4px 4px 0px 0px rgba(0,0,0,1)";
 
@@ -39,8 +56,8 @@ const defaultSkills = [
   { skill: "Học thuật", value: 50, icon: GraduationCap },
 ];
 
-const getIconForSkill = (skillName: string) => {
-  const map: Record<string, any> = {
+const getIconForSkill = (skillName: string): LucideIcon => {
+  const map: Record<string, LucideIcon> = {
     "Lập trình": Code2,
     "Cơ sở dữ liệu": Database,
     "Giao tiếp": MessageCircle,
@@ -48,7 +65,7 @@ const getIconForSkill = (skillName: string) => {
     "Thiết kế UI": Palette,
     "Học thuật": GraduationCap,
   };
-  return map[skillName] || Brain;
+  return map[skillName] ?? Brain;
 };
 
 const weeklyXP = [
@@ -73,8 +90,8 @@ const badges = [
 ];
 
 export default function Profile() {
-  const [profile, setProfile] = useState<any>(null);
-  const [mySkills, setMySkills] = useState<any[]>(defaultSkills);
+  const [profile, setProfile] = useState<StudentProfile | null>(null);
+  const [mySkills, setMySkills] = useState<Skill[]>(defaultSkills);
   const [skillHistory, setSkillHistory] = useState<any[]>([]);
   const [showHistory, setShowHistory] = useState(false);
   
@@ -92,8 +109,8 @@ export default function Profile() {
   const fetchProfileAndSkills = async () => {
     try {
       const [profRes, skillsRes] = await Promise.all([
-        fetch("http://localhost:4000/api/client/student/account/profile", { credentials: "include" }),
-        fetch("http://localhost:4000/api/client/student/skills", { credentials: "include" })
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/client/student/account/profile`, { credentials: "include" }),
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/client/student/skills`, { credentials: "include" })
       ]);
       const profJson = await profRes.json();
       const skillsJson = await skillsRes.json();
@@ -117,7 +134,7 @@ export default function Profile() {
 
   const fetchSkillHistory = async () => {
     try {
-      const res = await fetch("http://localhost:4000/api/client/student/skills/history", { credentials: "include" });
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/client/student/skills/history`, { credentials: "include" });
       const json = await res.json();
       if (json.code === "success") {
         setSkillHistory(json.data);
@@ -135,6 +152,18 @@ export default function Profile() {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    if (!file.type.startsWith('image/')) {
+      toast.error("Chỉ chấp nhận file hình ảnh (JPG, PNG, WEBP...)");
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Kích thước ảnh không được vượt quá 5MB");
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      return;
+    }
+
     const reader = new FileReader();
     reader.onload = async (event) => {
       const base64 = event.target?.result as string;
@@ -142,7 +171,7 @@ export default function Profile() {
       toast.info("Đang nhờ Groq AI phân tích bảng điểm...");
 
       try {
-        const res = await fetch("http://localhost:4000/api/client/student/skills/analyze", {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/client/student/skills/analyze`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include",

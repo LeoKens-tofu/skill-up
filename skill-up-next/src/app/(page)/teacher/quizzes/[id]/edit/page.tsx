@@ -38,7 +38,7 @@ export default function EditQuizPage() {
   useEffect(() => {
     const fetchQuiz = async () => {
       try {
-        const res = await fetch(`http://localhost:4000/api/client/teacher/quizzes/${quizId}`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/client/teacher/quizzes/${quizId}`, {
           credentials: "include"
         });
         const json = await res.json();
@@ -112,7 +112,7 @@ export default function EditQuizPage() {
         }));
 
         try {
-          const res = await fetch(`http://localhost:4000/api/client/teacher/quizzes/${quizId}`, {
+          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/client/teacher/quizzes/${quizId}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             credentials: "include",

@@ -4,6 +4,7 @@ import cors from "cors";
 import { connectDB } from "./config/database.config";
 import cookieParser from 'cookie-parser';
 import { routes } from "./routers/index.route";
+import { UPLOAD_ROOT } from "./config/upload.config";
 const app = express();
 const port = 4000;
 
@@ -13,7 +14,7 @@ dotenv.config();
 //Config Cors
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: ["http://localhost:3000", "https://mindmaster.click", "https://www.mindmaster.click"],
     credentials: true
   })
 );
@@ -31,6 +32,9 @@ connectRedis();
 //Allow json
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
+
+//Serve uploaded files (video/tài liệu/ảnh bìa khóa học)
+app.use("/api/uploads", express.static(UPLOAD_ROOT));
 
 // Routes
 routes(app);

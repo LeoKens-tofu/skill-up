@@ -18,7 +18,13 @@ export default function QuizzesPage() {
   const fetchQuizzes = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch(`http://localhost:4000/api/client/student/quizzes?page=${page}&limit=9&search=${search}&subject=${subjectFilter}`, {
+      const params = new URLSearchParams({
+        page: page.toString(),
+        limit: "9",
+        search,
+        subject: subjectFilter,
+      });
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/client/student/quizzes?${params}`, {
         credentials: "include"
       });
       const json = await res.json();

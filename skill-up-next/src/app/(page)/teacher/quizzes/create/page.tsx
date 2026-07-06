@@ -70,7 +70,7 @@ export default function CreateQuizPage() {
         const loadingToast = toast.loading("Đang lưu bộ câu hỏi...");
 
         try {
-          const res = await fetch("http://localhost:4000/api/client/teacher/quizzes", {
+          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/client/teacher/quizzes`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: "include",

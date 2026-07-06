@@ -22,7 +22,7 @@ export default function QuizTakingPage({ params }: { params: Promise<{ id: strin
   useEffect(() => {
     const fetchQuiz = async () => {
       try {
-        const res = await fetch(`http://localhost:4000/api/client/student/quizzes/${id}`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/client/student/quizzes/${id}`, {
           credentials: "include"
         });
         const json = await res.json();
@@ -106,7 +106,7 @@ export default function QuizTakingPage({ params }: { params: Promise<{ id: strin
 
     setSubmitting(true);
     try {
-      const res = await fetch(`http://localhost:4000/api/client/student/quizzes/${id}/submit`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/client/student/quizzes/${id}/submit`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

@@ -16,18 +16,17 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-const SHADOW_SM = "4px 4px 0px 0px rgba(0,0,0,1)";
 const SHADOW = "6px 6px 0px 0px rgba(0,0,0,1)";
 
-export default function TrashPage() {
+export default function CourseTrashPage() {
   const [trash, setTrash] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchTrash = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/client/teacher/quizzes/trash`, {
-        credentials: "include"
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/client/teacher/courses/trash`, {
+        credentials: "include",
       });
       const json = await res.json();
       if (json.code === "success") {
@@ -49,9 +48,9 @@ export default function TrashPage() {
   const handleRestore = async (id: string) => {
     const loadingToast = toast.loading("Đang khôi phục...");
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/client/teacher/quizzes/restore/${id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/client/teacher/courses/restore/${id}`, {
         method: "PATCH",
-        credentials: "include"
+        credentials: "include",
       });
       const json = await res.json();
       if (json.code === "success") {
@@ -68,9 +67,9 @@ export default function TrashPage() {
   const handleHardDelete = async (id: string) => {
     const loadingToast = toast.loading("Đang xóa vĩnh viễn...");
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/client/teacher/quizzes/hard/${id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/client/teacher/courses/hard/${id}`, {
         method: "DELETE",
-        credentials: "include"
+        credentials: "include",
       });
       const json = await res.json();
       if (json.code === "success") {
@@ -87,8 +86,8 @@ export default function TrashPage() {
   return (
     <div className="space-y-8">
       <div>
-        <Link 
-          href="/teacher/quizzes"
+        <Link
+          href="/teacher/courses"
           className="inline-flex items-center gap-2 font-sans text-sm text-[#0A1628]/60 hover:text-[#FF6B35] mb-2 transition-colors"
           style={{ fontWeight: 600 }}
         >
@@ -98,16 +97,16 @@ export default function TrashPage() {
           Thùng rác
         </h1>
         <p className="font-sans text-[#0A1628]/70 mt-2" style={{ fontWeight: 500 }}>
-          Các bộ câu hỏi đã xóa sẽ nằm ở đây. Bạn có thể khôi phục hoặc xóa vĩnh viễn.
+          Các khóa học đã xóa sẽ nằm ở đây. Bạn có thể khôi phục hoặc xóa vĩnh viễn.
         </p>
       </div>
 
-      <div className="overflow-x-auto border-[4px] border-black bg-white " style={{ boxShadow: SHADOW }}>
+      <div className="overflow-x-auto border-[4px] border-black bg-white" style={{ boxShadow: SHADOW }}>
         <table className="w-full text-left font-sans min-w-[800px]">
           <thead>
             <tr className="border-b-[4px] border-black bg-[#991B1B] text-white">
-              <th className="p-4" style={{ fontWeight: 700 }}>Tên bộ câu hỏi</th>
-              <th className="p-4" style={{ fontWeight: 700 }}>Môn học</th>
+              <th className="p-4" style={{ fontWeight: 700 }}>Tên khóa học</th>
+              <th className="p-4" style={{ fontWeight: 700 }}>Danh mục</th>
               <th className="p-4" style={{ fontWeight: 700 }}>Ngày xóa</th>
               <th className="p-4 text-center" style={{ fontWeight: 700 }}>Thao tác</th>
             </tr>
@@ -126,16 +125,16 @@ export default function TrashPage() {
                 </td>
               </tr>
             ) : (
-              trash.map((quiz) => (
-                <tr key={quiz._id} className="border-b-[3px] border-black text-[#0A1628] transition-colors hover:bg-[#FFF8F0]">
-                  <td className="p-4 font-serif" style={{ fontWeight: 700, fontSize: "1.125rem" }}>{quiz.title}</td>
+              trash.map((course) => (
+                <tr key={course._id} className="border-b-[3px] border-black text-[#0A1628] transition-colors hover:bg-[#FFF8F0]">
+                  <td className="p-4 font-serif" style={{ fontWeight: 700, fontSize: "1.125rem" }}>{course.title}</td>
                   <td className="p-4">
-                    <span className="text-xs border-[2px] border-black px-2 py-1 bg-[#FFF8F0] " style={{ fontWeight: 700 }}>
-                      {quiz.subject}
+                    <span className="text-xs border-[2px] border-black px-2 py-1 bg-[#FFF8F0]" style={{ fontWeight: 700 }}>
+                      {course.category}
                     </span>
                   </td>
                   <td className="p-4" style={{ fontWeight: 600 }}>
-                    {quiz.deletedAt ? format(new Date(quiz.deletedAt), 'dd/MM/yyyy HH:mm') : 'N/A'}
+                    {course.deletedAt ? format(new Date(course.deletedAt), "dd/MM/yyyy HH:mm") : "N/A"}
                   </td>
                   <td className="p-4">
                     <div className="flex items-center justify-center gap-3">
@@ -149,12 +148,12 @@ export default function TrashPage() {
                           <AlertDialogHeader>
                             <AlertDialogTitle className="font-serif text-2xl text-[#0A1628]" style={{ fontWeight: 700 }}>Xác nhận khôi phục</AlertDialogTitle>
                             <AlertDialogDescription className="font-sans text-base text-[#0A1628]/70" style={{ fontWeight: 500 }}>
-                              Bạn có chắc chắn muốn khôi phục bộ câu hỏi này không?
+                              Bạn có chắc chắn muốn khôi phục khóa học này không?
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
                             <AlertDialogCancel className="border-[3px] border-black rounded-none bg-white font-bold hover:bg-gray-100 text-[#0A1628] hover:-translate-y-0.5 transition-transform" style={{ boxShadow: "2px 2px 0px 0px rgba(0,0,0,1)" }}>Hủy</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => handleRestore(quiz._id)} className="border-[3px] border-black rounded-none bg-[#16A34A] font-bold hover:bg-[#16A34A]/90 text-white hover:-translate-y-0.5 transition-transform" style={{ boxShadow: "2px 2px 0px 0px rgba(0,0,0,1)" }}>Khôi phục</AlertDialogAction>
+                            <AlertDialogAction onClick={() => handleRestore(course._id)} className="border-[3px] border-black rounded-none bg-[#16A34A] font-bold hover:bg-[#16A34A]/90 text-white hover:-translate-y-0.5 transition-transform" style={{ boxShadow: "2px 2px 0px 0px rgba(0,0,0,1)" }}>Khôi phục</AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>
                       </AlertDialog>
@@ -169,12 +168,12 @@ export default function TrashPage() {
                           <AlertDialogHeader>
                             <AlertDialogTitle className="font-serif text-2xl text-[#0A1628]" style={{ fontWeight: 700 }}>Xóa vĩnh viễn</AlertDialogTitle>
                             <AlertDialogDescription className="font-sans text-base text-[#991B1B]" style={{ fontWeight: 600 }}>
-                              CẢNH BÁO: Hành động này sẽ xóa vĩnh viễn bộ câu hỏi và không thể khôi phục. Bạn chắc chắn chứ?
+                              CẢNH BÁO: Hành động này sẽ xóa vĩnh viễn khóa học (cùng toàn bộ chương, bài học) và không thể khôi phục. Bạn chắc chắn chứ?
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
                             <AlertDialogCancel className="border-[3px] border-black rounded-none bg-white font-bold hover:bg-gray-100 text-[#0A1628] hover:-translate-y-0.5 transition-transform" style={{ boxShadow: "2px 2px 0px 0px rgba(0,0,0,1)" }}>Hủy</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => handleHardDelete(quiz._id)} className="border-[3px] border-black rounded-none bg-[#991B1B] font-bold hover:bg-[#991B1B]/90 text-white hover:-translate-y-0.5 transition-transform" style={{ boxShadow: "2px 2px 0px 0px rgba(0,0,0,1)" }}>Xóa vĩnh viễn</AlertDialogAction>
+                            <AlertDialogAction onClick={() => handleHardDelete(course._id)} className="border-[3px] border-black rounded-none bg-[#991B1B] font-bold hover:bg-[#991B1B]/90 text-white hover:-translate-y-0.5 transition-transform" style={{ boxShadow: "2px 2px 0px 0px rgba(0,0,0,1)" }}>Xóa vĩnh viễn</AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>
                       </AlertDialog>

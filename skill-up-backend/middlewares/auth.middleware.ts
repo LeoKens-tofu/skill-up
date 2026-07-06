@@ -29,10 +29,10 @@ export const requireAuth = async (
       if (!activeVersion || decoded.tokenVersion !== activeVersion) {
         res.clearCookie("token", {
           httpOnly: true,
-          sameSite: "lax",
-          domain: process.env.NODE_ENV === "production" ? process.env.COOKIE_DOMAIN : "localhost",
+          sameSite: "none",
+          domain: process.env.COOKIE_DOMAIN || undefined,
           path: "/",
-          secure: process.env.NODE_ENV === "production",
+          secure: true,
         });
         return res.json({
           code: "error",
@@ -46,10 +46,10 @@ export const requireAuth = async (
   } catch (error) {
     res.clearCookie("token", {
       httpOnly: true,
-      sameSite: "lax",
-      domain: process.env.NODE_ENV === "production" ? process.env.COOKIE_DOMAIN : "localhost",
+      sameSite: "none",
+      domain: process.env.COOKIE_DOMAIN || undefined,
       path: "/",
-      secure: process.env.NODE_ENV === "production",
+      secure: true,
     });
     return res.json({
       code: "error",

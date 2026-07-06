@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  backend:
+    image: ten-tai-khoan-docker/skill-up-backend:latest
+    container_name: skill-up-backend
+    ports:
+      - "4000:4000"
+    restart: always
+    env_file:
+      - .env.backend
+    volumes:
+      # Lưu file upload (video/tài liệu/ảnh bìa) ra đĩa host để không mất khi redeploy image
+      - ./uploads:/app/uploads
+    # Optional: Nếu bạn có Redis/Mongo chạy local trên server, hãy map network hoặc IP ở đây
+
+  frontend:
+    image: ten-tai-khoan-docker/skill-up-next:latest
+    container_name: skill-up-next
+    ports:
+      - "3000:3000"
+    restart: always
+    # Frontend không cần truyền NEXT_PUBLIC_API_URL ở đây vì biến này đã được nạp cứng (baked) vào lúc build Docker image rồi

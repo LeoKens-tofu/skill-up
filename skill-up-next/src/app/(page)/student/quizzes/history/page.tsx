@@ -17,7 +17,12 @@ export default function QuizHistoryPage() {
   const fetchHistory = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch(`http://localhost:4000/api/client/student/quizzes/history?page=${page}&limit=10&search=${search}`, {
+      const params = new URLSearchParams({
+        page: page.toString(),
+        limit: "10",
+        search,
+      });
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/client/student/quizzes/history?${params}`, {
         credentials: "include"
       });
       const json = await res.json();

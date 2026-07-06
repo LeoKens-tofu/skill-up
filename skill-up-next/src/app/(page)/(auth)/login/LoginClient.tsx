@@ -1,10 +1,25 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from "react";
-import { Sun, Moon, User, Lock, Eye, EyeOff, TrendingUp } from "lucide-react";
+import { User, Lock, Eye, EyeOff, TrendingUp } from "lucide-react";
+import Image from 'next/image';
+import Link from 'next/link';
 // @ts-expect-error just-validate types are broken in Next.js
 import JustValidate from 'just-validate';
 import { toast } from 'sonner';
+
+const THEME = {
+  pageBg: "#FFF8F0",
+  panelBg: "#FFF8F0",
+  text: "#0A1628",
+  subText: "rgba(10,22,40,0.7)",
+  inputBg: "#FFFFFF",
+  inputText: "#0A1628",
+  inputPlaceholder: "rgba(10,22,40,0.4)",
+  border: "#000000",
+  segBg: "#FFF8F0",
+  segText: "#0A1628",
+};
 
 export default function App() {
   const [view, setView] = useState<"login" | "home">("login");
@@ -55,7 +70,7 @@ export default function App() {
 
         try {
           setIsLoading(true);
-          const response = await fetch("http://localhost:4000/api/client/auth/login", {
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/client/auth/login`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -88,20 +103,7 @@ export default function App() {
   }, [activeTab]);
 
 
-  // Harmonious theme palette (Light Mode)
-  const theme = {
-    pageBg: "#FFF8F0",
-    panelBg: "#FFF8F0",
-    text: "#0A1628",
-    subText: "rgba(10,22,40,0.7)",
-    inputBg: "#FFFFFF",
-    inputText: "#0A1628",
-    inputPlaceholder: "rgba(10,22,40,0.4)",
-    border: "#000000",
-    segBg: "#FFF8F0",
-    segText: "#0A1628",
-  };
-
+  const theme = THEME;
   const placeholder =
     activeTab === "student" ? "VD: DE170001" : "VD: giang.vien@fpt.edu.vn";
   const idLabel =
@@ -121,10 +123,13 @@ export default function App() {
       >
         {/* Background Image with Blur */}
         <div className="absolute inset-0 z-0">
-          <img
+          <Image
             src="/imports/image-3.png"
             alt="FPT University Da Nang Campus"
-            className="w-full h-full object-cover"
+            fill
+            priority
+            sizes="55vw"
+            className="object-cover"
             style={{ filter: "blur(1px)" }}
           />
           {/* Dark overlay for text readability */}
@@ -334,6 +339,7 @@ export default function App() {
                   } as React.CSSProperties)}
                 />
                 <button
+                  type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="ml-2 hover:text-[#FF6B35] transition-colors"
                   style={{ color: theme.inputText }}
@@ -426,13 +432,13 @@ export default function App() {
             style={{ fontWeight: 400, color: theme.text }}
           >
             Mới tham gia Skill Up?{" "}
-            <a
+            <Link
               href="/register"
               className="text-[#FF6B35] hover:underline"
               style={{ fontWeight: 600 }}
             >
               Tạo tài khoản
-            </a>
+            </Link>
           </p>
         </div>
       </div>

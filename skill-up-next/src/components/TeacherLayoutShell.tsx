@@ -13,7 +13,7 @@ export default function TeacherLayoutShell({ children }: { children: React.React
 
   const handleLogout = async () => {
     try {
-      const res = await fetch("http://localhost:4000/api/client/auth/logout", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/client/auth/logout`, {
         method: "POST",
         credentials: "include"
       });
@@ -27,7 +27,7 @@ export default function TeacherLayoutShell({ children }: { children: React.React
   };
 
   useEffect(() => {
-    fetch("http://localhost:4000/api/client/teacher/account/profile", {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/client/teacher/account/profile`, {
       credentials: "include"
     })
       .then((res) => res.json())

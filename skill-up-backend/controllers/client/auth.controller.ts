@@ -128,10 +128,10 @@ export const loginPost = async (req: Request, res: Response): Promise<any> => {
     res.cookie("token", token, {
       maxAge: 24 * 60 * 60 * 1000,
       httpOnly: true,
-      sameSite: "lax",
-      domain: process.env.NODE_ENV === "production" ? process.env.COOKIE_DOMAIN : "localhost",
+      sameSite: "none",
+      domain: process.env.COOKIE_DOMAIN || undefined,
       path: "/",
-      secure: process.env.NODE_ENV === "production",
+      secure: true,
     });
 
     return res.json({
@@ -167,10 +167,10 @@ export const logout = async (req: Request, res: Response): Promise<any> => {
     
     res.clearCookie("token", {
       httpOnly: true,
-      sameSite: "lax",
-      domain: process.env.NODE_ENV === "production" ? process.env.COOKIE_DOMAIN : "localhost",
+      sameSite: "none",
+      domain: process.env.COOKIE_DOMAIN || undefined,
       path: "/",
-      secure: process.env.NODE_ENV === "production",
+      secure: true,
     });
     
     return res.json({
