@@ -15,7 +15,7 @@ export interface IResource {
   size?: string; // vd "2.4 MB" (hiển thị)
 }
 
-export type LessonType = "video" | "article" | "resource" | "quiz";
+export type LessonType = "video" | "article" | "resource" | "quiz" | "assignment";
 
 export interface ILesson {
   _id?: mongoose.Types.ObjectId;
@@ -30,7 +30,7 @@ export interface ILesson {
   videoSource?: "upload" | "external";
   duration?: string; // vd "12:30" (hiển thị)
 
-  // type = "article"
+  // type = "article" (và type = "assignment": dùng làm đề bài / hướng dẫn)
   content?: string; // nội dung text/markdown
 
   // type = "resource" (và cũng dùng làm đính kèm cho mọi loại bài)
@@ -38,6 +38,10 @@ export interface ILesson {
 
   // type = "quiz"
   questions: ILessonQuestion[];
+
+  // type = "assignment"
+  dueDate?: Date; // hạn nộp bài (sau hạn không cho nộp)
+  maxScore?: number; // điểm tối đa khi chấm (mặc định 10)
 }
 
 export interface IChapter {
@@ -101,7 +105,7 @@ const LessonSchema = new Schema<ILesson>(
     title: { type: String, required: true },
     type: {
       type: String,
-      enum: ["video", "article", "resource", "quiz"],
+      enum: ["video", "article", "resource", "quiz", "assignment"],
       required: true,
     },
     order: { type: Number, default: 0 },
@@ -117,6 +121,9 @@ const LessonSchema = new Schema<ILesson>(
     resources: { type: [ResourceSchema], default: [] },
 
     questions: { type: [LessonQuestionSchema], default: [] },
+
+    dueDate: { type: Date },
+    maxScore: { type: Number, default: 10 },
   },
   { _id: true }
 );

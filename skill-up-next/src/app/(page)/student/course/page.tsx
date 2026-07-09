@@ -169,6 +169,24 @@ export default function CoursePage() {
   const [activeCourseId, setActiveCourseId] = useState<string | null>(null);
   const [activeLessonId, setActiveLessonId] = useState<string | null>(null);
 
+  // Deep-link từ Lịch học: ?course=<id>&lesson=<lessonId>
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const course = params.get("course");
+    const lesson = params.get("lesson");
+    if (course) {
+      setActiveCourseId(course);
+      if (lesson) {
+        setActiveLessonId(lesson);
+        setMode("learn");
+      } else {
+        setMode("detail");
+      }
+      // dọn query để không giữ lại khi back
+      window.history.replaceState(null, "", "/student/course");
+    }
+  }, []);
+
   if (mode === "learn" && activeCourseId) {
     return (
       <CourseLearn

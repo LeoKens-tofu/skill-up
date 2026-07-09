@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import {
   ArrowLeft, Save, Plus, Trash2, X, ChevronDown, ChevronUp,
   Video, FileText, Paperclip, HelpCircle, Upload, Check, Loader2,
+  ClipboardList, CalendarClock,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -23,7 +24,7 @@ const COLOR_PRESETS = [
   { cover: "#FFF8F0", stripe: "#0A1628" },
 ];
 
-type LessonType = "video" | "article" | "resource" | "quiz";
+type LessonType = "video" | "article" | "resource" | "quiz" | "assignment";
 
 type Question = {
   _key: number;
@@ -49,6 +50,8 @@ type Lesson = {
   content?: string;
   resources: Resource[];
   questions: Question[];
+  dueDate?: string; // datetime-local "YYYY-MM-DDTHH:mm" (bài tập)
+  maxScore?: number; // điểm tối đa (bài tập)
 };
 
 type Chapter = {
@@ -62,6 +65,15 @@ type Chapter = {
 let keySeq = 1;
 const nextKey = () => Date.now() * 1000 + keySeq++;
 
+// ISO/Date -> value cho <input type="datetime-local"> theo giờ địa phương
+const toLocalInput = (v?: string | Date): string => {
+  if (!v) return "";
+  const d = new Date(v);
+  if (isNaN(d.getTime())) return "";
+  const p = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
+};
+
 const emptyLesson = (): Lesson => ({
   _key: nextKey(),
   title: "",
@@ -74,6 +86,8 @@ const emptyLesson = (): Lesson => ({
   content: "",
   resources: [],
   questions: [],
+  dueDate: "",
+  maxScore: 10,
 });
 
 const emptyChapter = (): Chapter => ({
@@ -88,6 +102,7 @@ const LESSON_TYPE_META: Record<LessonType, { label: string; icon: any }> = {
   article: { label: "Bài viết", icon: FileText },
   resource: { label: "Tài liệu", icon: Paperclip },
   quiz: { label: "Quiz", icon: HelpCircle },
+  assignment: { label: "Bài tập", icon: ClipboardList },
 };
 
 export type CourseInitial = {
@@ -150,6 +165,8 @@ export default function CourseBuilder({
         videoSource: ls.videoSource || "upload",
         duration: ls.duration || "",
         content: ls.content || "",
+        dueDate: toLocalInput(ls.dueDate),
+        maxScore: ls.maxScore ?? 10,
         resources: ls.resources || [],
         questions: (ls.questions || []).map((q: any) => ({
           _key: nextKey(),
@@ -318,6 +335,10 @@ export default function CourseBuilder({
           return `${where} chưa có nội dung bài viết`;
         if (ls.type === "resource" && ls.resources.length === 0)
           return `${where} cần ít nhất 1 tài liệu`;
+        if (ls.type === "assignment") {
+          if (!ls.content?.trim()) return `${where} chưa có đề bài`;
+          if (!ls.dueDate) return `${where} chưa đặt hạn nộp`;
+        }
         if (ls.type === "quiz") {
           if (ls.questions.length === 0) return `${where} cần ít nhất 1 câu hỏi`;
           for (let k = 0; k < ls.questions.length; k++) {
@@ -361,7 +382,9 @@ export default function CourseBuilder({
         videoUrl: ls.type === "video" ? ls.videoUrl : "",
         videoSource: ls.videoSource,
         duration: ls.duration,
-        content: ls.type === "article" ? ls.content : "",
+        content: ls.type === "article" || ls.type === "assignment" ? ls.content : "",
+        dueDate: ls.type === "assignment" ? (ls.dueDate || null) : null,
+        maxScore: ls.type === "assignment" ? Number(ls.maxScore) || 10 : 10,
         resources: ls.resources,
         questions:
           ls.type === "quiz"
@@ -693,13 +716,15 @@ function LessonEditor({
     const hasData =
       (lesson.type === "video" && lesson.videoUrl) ||
       (lesson.type === "article" && lesson.content) ||
-      (lesson.type === "quiz" && lesson.questions.length > 0);
+      (lesson.type === "quiz" && lesson.questions.length > 0) ||
+      (lesson.type === "assignment" && (lesson.content || lesson.dueDate));
     if (hasData && !confirm("Đổi loại bài học sẽ xóa nội dung chính của loại hiện tại (tài liệu đính kèm được giữ lại). Tiếp tục?")) return;
     patchLessonRaw(ck, lk, () => ({
       type: t,
       videoUrl: "", videoSource: "upload", duration: "",
       content: "",
       questions: [],
+      dueDate: "", maxScore: 10,
       // resources: giữ nguyên
     }));
   };
@@ -841,6 +866,34 @@ function LessonEditor({
             className="flex items-center gap-2 border-[2px] border-black bg-white text-[#0A1628] px-3 py-2 font-sans text-sm hover:-translate-y-0.5 transition-transform" style={{ boxShadow: "2px 2px 0px 0px rgba(0,0,0,1)", fontWeight: 700 }}>
             <Plus size={16} strokeWidth={3} /> Thêm câu hỏi
           </button>
+        </div>
+      )}
+
+      {lesson.type === "assignment" && (
+        <div className="space-y-3">
+          <div>
+            <label className="block font-sans text-xs text-[#0A1628]/70 mb-1" style={{ fontWeight: 700 }}>Đề bài / hướng dẫn</label>
+            <textarea value={lesson.content || ""} onChange={(e) => patchLesson(ck, lk, { content: e.target.value })}
+              placeholder="Mô tả yêu cầu bài tập, tiêu chí chấm điểm... (hỗ trợ Markdown)"
+              className="w-full border-[2px] border-black bg-[#FFF8F0] text-[#0A1628] p-3 font-sans text-sm outline-none min-h-[110px] resize-y focus:border-[#FF6B35]" style={{ fontWeight: 500 }} />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className="font-sans text-xs text-[#0A1628]/70 mb-1 flex items-center gap-1.5" style={{ fontWeight: 700 }}>
+                <CalendarClock size={13} /> Hạn nộp
+              </label>
+              <input type="datetime-local" value={lesson.dueDate || ""} onChange={(e) => patchLesson(ck, lk, { dueDate: e.target.value })}
+                className="w-full border-[2px] border-black bg-[#FFF8F0] text-[#0A1628] px-3 py-2 font-sans text-sm outline-none focus:border-[#FF6B35]" style={{ fontWeight: 500 }} />
+            </div>
+            <div>
+              <label className="block font-sans text-xs text-[#0A1628]/70 mb-1" style={{ fontWeight: 700 }}>Điểm tối đa</label>
+              <input type="number" min={1} value={lesson.maxScore ?? 10} onChange={(e) => patchLesson(ck, lk, { maxScore: Number(e.target.value) })}
+                className="w-full border-[2px] border-black bg-[#FFF8F0] text-[#0A1628] px-3 py-2 font-sans text-sm outline-none focus:border-[#FF6B35]" style={{ fontWeight: 500 }} />
+            </div>
+          </div>
+          <p className="font-sans text-[11px] text-[#0A1628]/50" style={{ fontWeight: 500 }}>
+            Sau hạn nộp, sinh viên không thể nộp bài. Đề bài dạng file (PDF...) có thể thêm ở mục <b>Tài liệu đính kèm</b> bên dưới.
+          </p>
         </div>
       )}
 

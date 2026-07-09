@@ -187,6 +187,9 @@ export const detail = async (req: Request, res: Response): Promise<any> => {
           videoSource: ls.videoSource,
           content: ls.content,
           resources: ls.resources,
+          // Bài tập: hạn nộp + điểm tối đa để hiển thị & nộp bài
+          dueDate: ls.dueDate,
+          maxScore: ls.maxScore,
           // Với quiz: gửi câu hỏi + lựa chọn nhưng KHÔNG gửi đáp án đúng
           questions: (ls.questions || []).map((q: any) => ({
             _id: q._id,
@@ -346,6 +349,29 @@ export const completeLesson = async (req: Request, res: Response): Promise<any> 
       }
 
       enrollment.completedLessonIds.push(lesson._id);
+    }
+
+    // Lưu điểm quiz để giáo viên theo dõi (cập nhật theo lần nộp gần nhất)
+    if (lesson.type === "quiz" && quizResult) {
+      const existing = enrollment.lessonResults.find(
+        (r) => r.lessonId.toString() === lesson._id.toString()
+      );
+      if (existing) {
+        existing.score = quizResult.score;
+        existing.correctAnswers = quizResult.correctAnswers;
+        existing.totalQuestions = quizResult.totalQuestions;
+        existing.submittedAt = new Date();
+        if (xpAwarded > 0) existing.xpEarned = xpAwarded; // chỉ set khi lần đầu
+      } else {
+        enrollment.lessonResults.push({
+          lessonId: lesson._id,
+          score: quizResult.score,
+          correctAnswers: quizResult.correctAnswers,
+          totalQuestions: quizResult.totalQuestions,
+          xpEarned: xpAwarded,
+          submittedAt: new Date(),
+        } as any);
+      }
     }
 
     enrollment.lastLessonId = lesson._id;
