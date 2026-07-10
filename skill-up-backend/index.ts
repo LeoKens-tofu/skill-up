@@ -1,10 +1,12 @@
 import express from "express";
+import http from "http";
 import dotenv from 'dotenv'
 import cors from "cors";
 import { connectDB } from "./config/database.config";
 import cookieParser from 'cookie-parser';
 import { routes } from "./routers/index.route";
 import { UPLOAD_ROOT } from "./config/upload.config";
+import { initSocket } from "./sockets";
 const app = express();
 const port = 4000;
 
@@ -39,7 +41,11 @@ app.use("/api/uploads", express.static(UPLOAD_ROOT));
 // Routes
 routes(app);
 
-app.listen(port, () => {
+// HTTP server + Socket.io (chat nhóm realtime)
+const server = http.createServer(app);
+initSocket(server);
+
+server.listen(port, () => {
   console.log(`http://localhost:${port}`);
 });
 

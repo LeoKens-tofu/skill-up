@@ -5,6 +5,7 @@ import { courseRoutes } from "./course.route";
 import { scheduleRoutes } from "./schedule.route";
 import { submissionRoutes } from "./submission.route";
 import { assignmentRoutes } from "./assignment.route";
+import { groupRoutes } from "./group.route";
 
 import { skillRoutes } from "./skill.route";
 
@@ -16,6 +17,7 @@ router.use("/courses", courseRoutes);
 router.use("/schedule", scheduleRoutes);
 router.use("/submissions", submissionRoutes);
 router.use("/assignments", assignmentRoutes);
+router.use("/groups", groupRoutes);
 router.use("/skills", skillRoutes);
 
 export const studentRoutes = router;

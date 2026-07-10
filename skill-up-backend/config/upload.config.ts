@@ -11,9 +11,10 @@ const VIDEO_DIR = path.join(UPLOAD_ROOT, "videos");
 const RESOURCE_DIR = path.join(UPLOAD_ROOT, "resources");
 const THUMBNAIL_DIR = path.join(UPLOAD_ROOT, "thumbnails");
 const SUBMISSION_DIR = path.join(UPLOAD_ROOT, "submissions");
+const GROUP_CHAT_DIR = path.join(UPLOAD_ROOT, "group-chat");
 
 // Tạo sẵn thư mục khi khởi động
-[UPLOAD_ROOT, VIDEO_DIR, RESOURCE_DIR, THUMBNAIL_DIR, SUBMISSION_DIR].forEach((dir) => {
+[UPLOAD_ROOT, VIDEO_DIR, RESOURCE_DIR, THUMBNAIL_DIR, SUBMISSION_DIR, GROUP_CHAT_DIR].forEach((dir) => {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
   }
@@ -86,5 +87,12 @@ export const uploadThumbnail = multer({
 export const uploadSubmission = multer({
   storage: storage(SUBMISSION_DIR),
   limits: { fileSize: 50 * MB },
+  fileFilter: fileFilter(RESOURCE_MIMES),
+});
+
+// Đính kèm chat nhóm: ảnh + tài liệu phổ biến, tối đa 25MB
+export const uploadGroupChat = multer({
+  storage: storage(GROUP_CHAT_DIR),
+  limits: { fileSize: 25 * MB },
   fileFilter: fileFilter(RESOURCE_MIMES),
 });
