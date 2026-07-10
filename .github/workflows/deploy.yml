@@ -74,7 +74,7 @@ jobs:
           script: |
             set -e
             # Thư mục chứa docker-compose.yml trên VPS (đặt biến DEPLOY_PATH, mặc định /home/ubuntu/skill-up)
-            cd ${{ vars.DEPLOY_PATH || '/home/root/skill-up' }}
+            cd ${{ vars.DEPLOY_PATH || '/root/skill-up' }}
 
             # Đăng nhập Docker Hub trên VPS để kéo được image (nếu repo private)
             echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
