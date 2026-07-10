@@ -1,15 +1,29 @@
 'use client';
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { Bell, Sun, Moon, GraduationCap, LogOut } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
 import { TeacherSidebar } from "./TeacherSidebar";
+import HeaderBar, { NotificationItem } from "./HeaderBar";
 
-const SHADOW = "6px 6px 0px 0px rgba(0,0,0,1)";
-const SHADOW_SM = "4px 4px 0px 0px rgba(0,0,0,1)";
+const TEACHER_NAV = [
+  { id: "/teacher/dashboard", label: "Tổng quan" },
+  { id: "/teacher/classes", label: "Lớp học phụ trách" },
+  { id: "/teacher/quizzes", label: "Quản lý câu hỏi" },
+  { id: "/teacher/assessments", label: "Đánh giá năng lực" },
+  { id: "/teacher/courses", label: "Khóa học" },
+  { id: "/teacher/profile", label: "Hồ sơ" },
+  { id: "/teacher/settings", label: "Cài đặt" },
+];
+
+const TEACHER_NOTIFICATIONS: NotificationItem[] = [
+  { id: 1, icon: "submit", title: "Sinh viên vừa nộp bài tập cần chấm", time: "15 phút trước", unread: true },
+  { id: 2, icon: "quiz", title: "Lớp Lập trình Web: 3 bài đang chờ chấm", time: "1 giờ trước", unread: true },
+  { id: 3, icon: "course", title: "Khóa 'React cơ bản' đạt 50 lượt ghi danh", time: "Hôm qua", unread: false },
+];
+
 export default function TeacherLayoutShell({ children }: { children: React.ReactNode }) {
-  const [notifOpen, setNotifOpen] = useState(false);
   const [profile, setProfile] = useState<any>(null);
   const router = useRouter();
+  const pathname = usePathname();
 
   const handleLogout = async () => {
     try {
@@ -45,60 +59,14 @@ export default function TeacherLayoutShell({ children }: { children: React.React
         
         <main className="flex-1 min-w-0 px-10 py-8">
           {/* Top bar */}
-          <div className="flex items-center justify-end mb-8 border-b-[4px] border-black pb-4">
-            <div className="flex items-center gap-4">
-
-              <button
-                onClick={() => setNotifOpen((v) => !v)}
-                className="group relative border-[3px] border-black bg-[#FFF8F0] p-3 transition-all duration-200 hover:-translate-y-0.5 hover:-translate-x-0.5 hover:bg-[#FF6B35]"
-                style={{ boxShadow: SHADOW_SM }}
-              >
-                <Bell
-                  size={20}
-                  className="text-[#0A1628] transition-colors duration-200 group-hover:text-white group-hover:rotate-12 group-hover:scale-110"
-                />
-              </button>
-
-              <div
-                className="flex items-center gap-3 border-[3px] border-black bg-[#FFF8F0] pl-3 pr-4 py-2"
-                style={{ boxShadow: SHADOW_SM }}
-              >
-                <div className="w-11 h-11 border-[3px] border-black bg-[#FF6B35] overflow-hidden flex items-center justify-center text-white">
-                  {profile?.avatar ? (
-                    <img
-                      src={profile.avatar}
-                      alt={profile?.fullName || "Giảng viên"}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <GraduationCap size={24} />
-                  )}
-                </div>
-                <div className="text-left">
-                  <p
-                    className="font-sans text-sm text-[#0A1628] leading-tight"
-                    style={{ fontWeight: 700 }}
-                  >
-                    {profile?.fullName || "Giảng viên"}
-                  </p>
-                  <p
-                    className="font-sans text-xs text-[#0A1628]/60 leading-tight"
-                    style={{ fontWeight: 500 }}
-                  >
-                    Giảng viên IT
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={handleLogout}
-                title="Đăng xuất"
-                className="group border-[3px] border-black bg-white p-3 transition-all duration-200 hover:-translate-y-0.5 hover:-translate-x-0.5 hover:bg-[#991B1B] active:translate-x-1 active:translate-y-1"
-                style={{ boxShadow: SHADOW_SM }}
-              >
-                <LogOut size={20} className="text-[#0A1628] transition-colors duration-200 group-hover:text-white" />
-              </button>
-            </div>
-          </div>
+          <HeaderBar
+            role="teacher"
+            areaLabel="Khu vực giảng viên"
+            sectionTitle={TEACHER_NAV.find((n) => pathname.startsWith(n.id))?.label || "Bảng điều khiển"}
+            profile={profile}
+            onLogout={handleLogout}
+            initialNotifications={TEACHER_NOTIFICATIONS}
+          />
 
           {children}
         </main>

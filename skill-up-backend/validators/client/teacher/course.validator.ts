@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 
 const LEVELS = ["Cơ bản", "Trung cấp", "Nâng cao"];
-const LESSON_TYPES = ["video", "article", "resource", "quiz"];
+const LESSON_TYPES = ["video", "article", "resource", "quiz", "assignment"];
 
 export const courseValidator = (
   req: Request,
@@ -87,6 +87,21 @@ export const courseValidator = (
             return res.json({
               code: "error",
               message: `${where} cần ít nhất 1 tài liệu`,
+            });
+          }
+        }
+
+        if (ls.type === "assignment") {
+          if (!ls.content || typeof ls.content !== "string" || ls.content.trim() === "") {
+            return res.json({
+              code: "error",
+              message: `${where} chưa có đề bài`,
+            });
+          }
+          if (!ls.dueDate) {
+            return res.json({
+              code: "error",
+              message: `${where} chưa đặt hạn nộp`,
             });
           }
         }

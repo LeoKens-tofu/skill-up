@@ -484,23 +484,23 @@ function EventModal({
           </div>
 
           {/* Ngày + giờ */}
-          <div className="grid grid-cols-2 gap-3">
-            <div>
+          <div className={`grid gap-3 ${type === "study" ? "grid-cols-1 sm:grid-cols-3" : "grid-cols-1"}`}>
+            <div className="min-w-0">
               <label className="font-sans text-xs uppercase tracking-wider text-[#0A1628]/60 block mb-2" style={{ fontWeight: 700 }}>Ngày</label>
               <input type="date" value={date} onChange={(e) => setDate(e.target.value)}
                 className="w-full border-[3px] border-black bg-white px-3 py-2 font-sans outline-none" />
             </div>
             {type === "study" && (
-              <div className="flex items-end gap-2">
-                <div className="flex-1">
-                  <label className="font-sans text-xs uppercase tracking-wider text-[#0A1628]/60 block mb-2 flex items-center gap-1" style={{ fontWeight: 700 }}><Clock size={12} /> Từ</label>
+              <>
+                <div className="min-w-0">
+                  <label className="font-sans text-xs uppercase tracking-wider text-[#0A1628]/60 mb-2 flex items-center gap-1" style={{ fontWeight: 700 }}><Clock size={12} /> Từ</label>
                   <input type="time" value={startTime} onChange={(e) => setStartTime(e.target.value)} className="w-full border-[3px] border-black bg-white px-2 py-2 font-sans outline-none" />
                 </div>
-                <div className="flex-1">
+                <div className="min-w-0">
                   <label className="font-sans text-xs uppercase tracking-wider text-[#0A1628]/60 block mb-2" style={{ fontWeight: 700 }}>Đến</label>
                   <input type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} className="w-full border-[3px] border-black bg-white px-2 py-2 font-sans outline-none" />
                 </div>
-              </div>
+              </>
             )}
           </div>
 
