@@ -37,8 +37,8 @@ jobs:
           file: ./skill-up-backend/Dockerfile
           push: true
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/skill-up-backend:latest
-            ${{ secrets.DOCKER_USERNAME }}/skill-up-backend:${{ github.sha }}
+            ${{ secrets.DOCKER_USERNAME }}/skill-up-back:latest
+            ${{ secrets.DOCKER_USERNAME }}/skill-up-back:${{ github.sha }}
           cache-from: type=gha,scope=backend
           cache-to: type=gha,mode=max,scope=backend
 
@@ -53,8 +53,8 @@ jobs:
           build-args: |
             NEXT_PUBLIC_API_URL=https://api.mindmaster.click/api
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/skill-up-next:latest
-            ${{ secrets.DOCKER_USERNAME }}/skill-up-next:${{ github.sha }}
+            ${{ secrets.DOCKER_USERNAME }}/skill-up-front:latest
+            ${{ secrets.DOCKER_USERNAME }}/skill-up-front:${{ github.sha }}
           cache-from: type=gha,scope=frontend
           cache-to: type=gha,mode=max,scope=frontend
 
