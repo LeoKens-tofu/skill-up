@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import dynamic from "next/dynamic";
 import { Send, Smile, Loader2, ChevronUp, Paperclip, Sticker, FileText, Download } from "lucide-react";
 import { toast } from "sonner";
@@ -19,9 +19,16 @@ export type ChatMessage = {
   text: string;
   attachments: Attachment[];
   sticker: string;
+  mentions?: string[];
+  mentionAll?: boolean;
   sender: { _id: string; fullName: string; avatar: string; studentId: string };
   createdAt: string;
 };
+
+type MentionUser = { _id: string; fullName: string; avatar?: string };
+const ALL_MENTION = { _id: "__all__", fullName: "Tất cả" };
+
+const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 const initials = (name: string) =>
   (name || "?").trim().split(/\s+/).slice(-2).map((w) => w[0]).join("").toUpperCase();
@@ -49,10 +56,12 @@ export default function GroupChat({
   groupId,
   groupColor,
   myId,
+  members = [],
 }: {
   groupId: string;
   groupColor: string;
   myId: string;
+  members?: MentionUser[];
 }) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(true);
@@ -65,9 +74,16 @@ export default function GroupChat({
   const [showStickers, setShowStickers] = useState(false);
   const [uploading, setUploading] = useState(false);
 
+  // @mention
+  const [mentionOpen, setMentionOpen] = useState(false);
+  const [mentionQuery, setMentionQuery] = useState("");
+  const [mentionStart, setMentionStart] = useState(0);
+  const [mentionIndex, setMentionIndex] = useState(0);
+
   const scrollRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const inputEl = useRef<HTMLInputElement>(null);
   const typingTimers = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
   const selfTypingTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isTypingSent = useRef(false);
@@ -201,22 +217,64 @@ export default function GroupChat({
     }
   };
 
-  const onInputChange = (v: string) => {
+  // Phát hiện đang gõ "@..." ngay trước con trỏ để bật gợi ý
+  const detectMention = (v: string, caret: number) => {
+    const upto = v.slice(0, caret);
+    const at = upto.lastIndexOf("@");
+    if (at < 0) { setMentionOpen(false); return; }
+    const before = at === 0 ? "" : upto[at - 1];
+    if (before && !/\s/.test(before)) { setMentionOpen(false); return; } // @ phải mở đầu 1 token
+    const q = upto.slice(at + 1);
+    if (q.includes("@") || q.length > 30) { setMentionOpen(false); return; }
+    setMentionStart(at);
+    setMentionQuery(q);
+    setMentionIndex(0);
+    setMentionOpen(true);
+  };
+
+  const onInputChange = (v: string, caret: number) => {
     setInput(v);
     emitTyping(true);
     if (selfTypingTimer.current) clearTimeout(selfTypingTimer.current);
     selfTypingTimer.current = setTimeout(() => emitTyping(false), 1500);
+    detectMention(v, caret);
+  };
+
+  // Chèn token "@Tên " thay cho phần đang gõ, đặt lại con trỏ
+  const pickMention = (u: MentionUser) => {
+    const el = inputEl.current;
+    const caret = el?.selectionStart ?? input.length;
+    const before = input.slice(0, mentionStart);
+    const after = input.slice(caret);
+    const label = u._id === "__all__" ? "Tất cả" : u.fullName;
+    const token = `@${label} `;
+    const next = before + token + after;
+    setInput(next);
+    setMentionOpen(false);
+    requestAnimationFrame(() => {
+      const pos = (before + token).length;
+      el?.focus();
+      el?.setSelectionRange(pos, pos);
+    });
   };
 
   const send = () => {
     const text = input.trim();
     if (!text) return;
+    // Suy ra mention từ nội dung cuối cùng (bền với việc sửa/xóa)
+    const mentionAll = /(^|\s)@(all|tất cả)(\s|$)/i.test(input);
+    const mentions = mentionAll
+      ? []
+      : members
+          .filter((m) => String(m._id) !== String(myId) && input.includes(`@${m.fullName}`))
+          .map((m) => String(m._id));
     const socket = getSocket();
-    socket.emit("message:send", { groupId, type: "text", text }, (r: any) => {
+    socket.emit("message:send", { groupId, type: "text", text, mentions, mentionAll }, (r: any) => {
       if (!r?.ok) toast.error(r?.message || "Gửi tin nhắn thất bại");
     });
     setInput("");
     setShowEmoji(false);
+    setMentionOpen(false);
     emitTyping(false);
     if (selfTypingTimer.current) clearTimeout(selfTypingTimer.current);
   };
@@ -257,6 +315,44 @@ export default function GroupChat({
       if (!r?.ok) toast.error(r?.message || "Gửi sticker thất bại");
     });
     setShowStickers(false);
+  };
+
+  const memberMap = useMemo(() => {
+    const map = new Map<string, MentionUser>();
+    members.forEach((m) => map.set(String(m._id), m));
+    return map;
+  }, [members]);
+
+  // Danh sách gợi ý mention theo phần đang gõ (Tất cả + thành viên khớp, bỏ chính mình)
+  const mq = mentionQuery.trim().toLowerCase();
+  const mentionCandidates: MentionUser[] = mentionOpen
+    ? [
+        ...("tất cả".includes(mq) || "all".includes(mq) || mq === "" ? [ALL_MENTION] : []),
+        ...members.filter(
+          (m) => String(m._id) !== String(myId) && m.fullName.toLowerCase().includes(mq)
+        ),
+      ]
+    : [];
+
+  // Bôi đậm/gạch chân các đoạn "@Tên" trong nội dung tin nhắn
+  const renderText = (m: ChatMessage) => {
+    const text = m.text || "";
+    const labels: string[] = [];
+    if (m.mentionAll) { labels.push("@Tất cả"); labels.push("@all"); }
+    (m.mentions || []).forEach((id) => {
+      const mem = memberMap.get(String(id));
+      if (mem) labels.push(`@${mem.fullName}`);
+    });
+    if (!labels.length) return text;
+    const uniq = [...new Set(labels)].sort((a, b) => b.length - a.length);
+    const re = new RegExp(`(${uniq.map(escapeRegExp).join("|")})`, "g");
+    return text.split(re).map((p, i) =>
+      uniq.includes(p) ? (
+        <span key={i} className="font-extrabold underline decoration-2 underline-offset-2">{p}</span>
+      ) : (
+        <span key={i}>{p}</span>
+      )
+    );
   };
 
   return (
@@ -306,6 +402,7 @@ export default function GroupChat({
               const mine = m.sender._id === myId;
               const prev = messages[i - 1];
               const grouped = prev && prev.sender._id === m.sender._id;
+              const mentionedMe = !mine && !!(m.mentionAll || (m.mentions || []).includes(myId));
               return (
                 <div key={m._id} className={`flex ${mine ? "justify-end" : "justify-start"} gap-2`}>
                   {!mine && (
@@ -322,6 +419,12 @@ export default function GroupChat({
                       <p className="font-sans text-[10px] mb-0.5" style={{ fontWeight: 700, color: "#FF6B35" }}>
                         {m.sender.fullName}
                       </p>
+                    )}
+
+                    {mentionedMe && (
+                      <span className="inline-flex items-center gap-1 mb-0.5 border-[2px] border-black bg-[#FFD166] text-[#0A1628] px-1.5 py-0.5 font-sans text-[9px]" style={{ fontWeight: 800 }}>
+                        @ Nhắc đến bạn
+                      </span>
                     )}
 
                     {m.type === "sticker" ? (
@@ -367,15 +470,16 @@ export default function GroupChat({
                       </a>
                     ) : (
                       <div
-                        className="border-[3px] border-black px-3 py-2 font-sans text-sm break-words"
+                        className="border-[3px] px-3 py-2 font-sans text-sm break-words"
                         style={{
-                          backgroundColor: mine ? groupColor : "#FFFFFF",
-                          color: mine ? "#FFFFFF" : "#0A1628",
+                          backgroundColor: mentionedMe ? "#FFF3D6" : mine ? groupColor : "#FFFFFF",
+                          color: mine && !mentionedMe ? "#FFFFFF" : "#0A1628",
+                          borderColor: mentionedMe ? "#FF6B35" : "#000000",
                           fontWeight: 500,
                           boxShadow: "3px 3px 0px 0px rgba(0,0,0,1)",
                         }}
                       >
-                        {m.text}
+                        {renderText(m)}
                       </div>
                     )}
 
@@ -483,11 +587,55 @@ export default function GroupChat({
           {uploading ? <Loader2 size={18} className="animate-spin" /> : <Paperclip size={18} />}
         </button>
 
+        {/* Gợi ý @mention */}
+        {mentionOpen && mentionCandidates.length > 0 && (
+          <>
+            <div className="fixed inset-0 z-30" onClick={() => setMentionOpen(false)} />
+            <div
+              className="absolute bottom-full left-3 right-3 mb-2 z-40 border-[3px] border-black bg-white max-h-52 overflow-y-auto"
+              style={{ boxShadow: SHADOW_SM }}
+            >
+              <p className="px-3 py-1.5 font-sans text-[10px] uppercase tracking-wider text-[#0A1628]/50 border-b-[2px] border-black/10" style={{ fontWeight: 700 }}>
+                Nhắc đến
+              </p>
+              {mentionCandidates.map((u, i) => (
+                <button
+                  key={u._id}
+                  onMouseDown={(e) => { e.preventDefault(); pickMention(u); }}
+                  onMouseEnter={() => setMentionIndex(i)}
+                  className="w-full flex items-center gap-2 px-3 py-2 text-left transition-colors"
+                  style={{ backgroundColor: i === mentionIndex ? "#FFE4D6" : "transparent" }}
+                >
+                  {u._id === "__all__" ? (
+                    <span className="w-7 h-7 border-[2px] border-black bg-[#FF6B35] text-white flex items-center justify-center flex-shrink-0" style={{ fontWeight: 800 }}>@</span>
+                  ) : (
+                    <span className="w-7 h-7 border-[2px] border-black bg-[#FFD166] flex items-center justify-center overflow-hidden font-serif text-[11px] text-[#0A1628] flex-shrink-0" style={{ fontWeight: 800 }}>
+                      {u.avatar ? <img src={u.avatar} alt={u.fullName} className="w-full h-full object-cover" /> : initials(u.fullName)}
+                    </span>
+                  )}
+                  <span className="font-sans text-sm text-[#0A1628] truncate" style={{ fontWeight: 600 }}>
+                    {u._id === "__all__" ? "Tất cả (@all)" : u.fullName}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+
         <input
+          ref={inputEl}
           value={input}
-          onChange={(e) => onInputChange(e.target.value)}
-          onKeyDown={(e) => { if (e.key === "Enter") send(); }}
-          placeholder="Nhập tin nhắn..."
+          onChange={(e) => onInputChange(e.target.value, e.target.selectionStart ?? e.target.value.length)}
+          onKeyDown={(e) => {
+            if (mentionOpen && mentionCandidates.length) {
+              if (e.key === "ArrowDown") { e.preventDefault(); setMentionIndex((i) => (i + 1) % mentionCandidates.length); return; }
+              if (e.key === "ArrowUp") { e.preventDefault(); setMentionIndex((i) => (i - 1 + mentionCandidates.length) % mentionCandidates.length); return; }
+              if (e.key === "Enter" || e.key === "Tab") { e.preventDefault(); pickMention(mentionCandidates[Math.min(mentionIndex, mentionCandidates.length - 1)]); return; }
+              if (e.key === "Escape") { e.preventDefault(); setMentionOpen(false); return; }
+            }
+            if (e.key === "Enter") send();
+          }}
+          placeholder="Nhập tin nhắn... (gõ @ để nhắc tên)"
           className="flex-1 border-[3px] border-black bg-white px-3 py-2.5 font-sans text-sm outline-none text-[#0A1628]"
           style={{ fontWeight: 500, boxShadow: SHADOW_XS }}
         />

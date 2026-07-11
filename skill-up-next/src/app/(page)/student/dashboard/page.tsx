@@ -28,6 +28,7 @@ import {
   ShoppingBag,
 } from "lucide-react";
 import QuickActions from "@/components/QuickActions";
+import { useStudentProfile } from "@/context/StudentProfileContext";
 
 type HomeProps = {
   onLogout: () => void;
@@ -141,6 +142,7 @@ const courses = [
 ];
 
 export default function Overview() {
+  const { profile, loading } = useStudentProfile();
   return (
     <>
         {/* Greeting Banner */}
@@ -158,10 +160,14 @@ export default function Overview() {
                 Chủ nhật, 07/06/2026
               </p>
               <h2
-                className="font-serif text-white mb-2"
+                className="font-serif text-white mb-2 min-h-[2.2rem]"
                 style={{ fontWeight: 700, fontSize: "1.75rem" }}
               >
-                Xin chào, Trần Song Hoài Nam!
+                {loading && !profile ? (
+                  <span className="inline-block align-middle h-7 w-64 max-w-full bg-white/30 animate-pulse" />
+                ) : (
+                  <>Xin chào, {profile?.fullName || "bạn"}!</>
+                )}
               </h2>
               <p
                 className="font-sans text-white/95"

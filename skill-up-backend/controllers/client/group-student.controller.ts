@@ -38,6 +38,7 @@ const serializeGroup = (group: any, userId: string) => {
     inviteCode: group.inviteCode,
     memberCount: (group.members || []).length,
     role: me?.role || "member",
+    muted: !!me?.muted,
     lastMessageText: group.lastMessageText || "",
     lastSenderName: group.lastSenderName || "",
     lastMessageAt: group.lastMessageAt || null,
@@ -240,6 +241,32 @@ export const leaveGroup = async (req: Request, res: Response): Promise<any> => {
   }
 };
 
+// [PATCH] /api/client/student/groups/:id/mute — bật/tắt thông báo nhóm (theo từng thành viên)
+export const muteGroup = async (req: Request, res: Response): Promise<any> => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) return res.json({ code: "error", message: "Chưa đăng nhập" });
+
+    const group = await findMemberGroup(String(req.params.id), userId);
+    if (!group) return res.json({ code: "error", message: "Nhóm không tồn tại hoặc bạn chưa tham gia" });
+
+    const muted = !!req.body?.muted;
+    await StudyGroup.updateOne(
+      { _id: group._id, "members.studentId": new mongoose.Types.ObjectId(userId) },
+      { $set: { "members.$.muted": muted } }
+    );
+
+    return res.json({
+      code: "success",
+      message: muted ? "Đã tắt thông báo nhóm" : "Đã bật thông báo nhóm",
+      data: { _id: String(group._id), muted },
+    });
+  } catch (error) {
+    console.error("muteGroup error", error);
+    return res.json({ code: "error", message: "Lỗi máy chủ" });
+  }
+};
+
 // [GET] /api/client/student/groups/:id/messages?before=<ISO>&limit=30 — lịch sử tin nhắn
 export const getMessages = async (req: Request, res: Response): Promise<any> => {
   try {
@@ -274,6 +301,8 @@ export const getMessages = async (req: Request, res: Response): Promise<any> => 
           text: d.get("text") || "",
           attachments: d.get("attachments") || [],
           sticker: d.get("sticker") || "",
+          mentions: (d.get("mentions") || []).map((x: any) => String(x)),
+          mentionAll: !!d.get("mentionAll"),
           sender: {
             _id: String(s._id || d.get("senderId")),
             fullName: s.fullName || "Ẩn danh",

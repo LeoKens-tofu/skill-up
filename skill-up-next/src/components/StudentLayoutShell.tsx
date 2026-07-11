@@ -30,6 +30,7 @@ import {
 } from "lucide-react";
 import { Sidebar } from "./Sidebar";
 import HeaderBar, { NotificationItem } from "./HeaderBar";
+import { StudentProfileProvider, useStudentProfile } from "@/context/StudentProfileContext";
 
 
 type HomeProps = {
@@ -53,9 +54,17 @@ const NAV_ITEMS = [
 ];
 
 export default function StudentLayoutShell({ children, onLogout }: { children: React.ReactNode; onLogout?: () => void }) {
+  return (
+    <StudentProfileProvider>
+      <ShellInner onLogout={onLogout}>{children}</ShellInner>
+    </StudentProfileProvider>
+  );
+}
+
+function ShellInner({ children }: { children: React.ReactNode; onLogout?: () => void }) {
   const pathname = usePathname();
   const router = useRouter();
-  const [profile, setProfile] = useState<any>(null);
+  const { profile, loading } = useStudentProfile();
 
   const handleLogout = async () => {
     try {
@@ -72,19 +81,6 @@ export default function StudentLayoutShell({ children, onLogout }: { children: R
     }
   };
 
-  useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/client/student/account/profile`, {
-      credentials: "include"
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.code === "success") {
-          setProfile(data.data);
-        }
-      })
-      .catch((err) => console.error("Failed to fetch profile", err));
-  }, []);
-
   const [chatOpen, setChatOpen] = useState(false);
   const studentNotifications: NotificationItem[] = [
     { id: 1, icon: "deadline", title: "Deadline sắp tới: Bài tập lớn SWP391", time: "2 giờ nữa", unread: true },
@@ -99,9 +95,21 @@ export default function StudentLayoutShell({ children, onLogout }: { children: R
   >([
     {
       role: "ai",
-      text: "Xin chào Hoài Nam! Tôi là trợ lý AI của Skill Up. Bạn cần giúp gì hôm nay — ôn tập, gợi ý khóa học, hay nhắc deadline?",
+      text: "Xin chào! Tôi là trợ lý AI của Skill Up. Bạn cần giúp gì hôm nay — ôn tập, gợi ý khóa học, hay nhắc deadline?",
     },
   ]);
+
+  // Cá nhân hóa lời chào AI khi có hồ sơ (chỉ thay lời chào mặc định)
+  useEffect(() => {
+    const name = profile?.fullName?.trim().split(/\s+/).slice(-1)[0];
+    if (!name) return;
+    setChatMessages((prev) => {
+      if (!prev[0] || prev[0].role !== "ai" || !prev[0].text.startsWith("Xin chào")) return prev;
+      const copy = [...prev];
+      copy[0] = { ...copy[0], text: `Xin chào ${name}! Tôi là trợ lý AI của Skill Up. Bạn cần giúp gì hôm nay — ôn tập, gợi ý khóa học, hay nhắc deadline?` };
+      return copy;
+    });
+  }, [profile]);
   const sendChat = () => {
     const t = chatInput.trim();
     if (!t) return;
@@ -132,6 +140,7 @@ export default function StudentLayoutShell({ children, onLogout }: { children: R
           areaLabel="Khu vực học viên"
           sectionTitle={NAV_ITEMS.find((n) => pathname.startsWith(n.id))?.label || "Bảng điều khiển"}
           profile={profile}
+          loading={loading}
           onLogout={handleLogout}
           initialNotifications={studentNotifications}
         />

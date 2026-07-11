@@ -22,6 +22,7 @@ type SocketUser = {
 };
 
 const roomOf = (groupId: string) => `group:${groupId}`;
+const userRoomOf = (userId: string) => `user:${userId}`; // room cá nhân để nhận thông báo mọi nhóm
 
 // Parse chuỗi cookie thô từ handshake ("a=1; b=2") thành object
 const parseCookies = (raw: string): Record<string, string> => {
@@ -113,6 +114,9 @@ export const initSocket = (httpServer: HttpServer): Server => {
     const user = socket.data.user as SocketUser;
     const joinedGroups = new Set<string>();
 
+    // Room cá nhân: nhận thông báo tin nhắn của MỌI nhóm kể cả khi chưa mở nhóm đó
+    socket.join(userRoomOf(user.id));
+
     // Tham gia room 1 nhóm (chỉ khi là thành viên)
     socket.on("group:join", async (groupId: string, cb?: (r: any) => void) => {
       if (!groupId || !(await isMember(groupId, user.id))) {
@@ -142,12 +146,22 @@ export const initSocket = (httpServer: HttpServer): Server => {
           text?: string;
           attachments?: { url: string; name?: string; size?: number; mime?: string }[];
           sticker?: string;
+          mentions?: string[];
+          mentionAll?: boolean;
         },
         cb?: (r: any) => void
       ) => {
         try {
           const { groupId } = payload || ({} as any);
-          if (!groupId || !(await isMember(groupId, user.id))) {
+          if (!groupId) return cb?.({ ok: false, message: "Không thể gửi tin nhắn" });
+
+          // Lấy nhóm kèm thành viên để vừa kiểm tra quyền, vừa biết ai cần nhận thông báo
+          const group = await StudyGroup.findOne({ _id: groupId, isDeleted: false })
+            .select("name color members");
+          const memberIds: string[] = ((group?.get("members") as any[]) || []).map((m) =>
+            String(m.studentId)
+          );
+          if (!group || !memberIds.includes(String(user.id))) {
             return cb?.({ ok: false, message: "Không thể gửi tin nhắn" });
           }
 
@@ -155,6 +169,13 @@ export const initSocket = (httpServer: HttpServer): Server => {
           const text = (payload.text || "").toString().slice(0, 5000);
           const attachments = Array.isArray(payload.attachments) ? payload.attachments : [];
           const sticker = (payload.sticker || "").toString();
+          const mentionAll = !!payload.mentionAll;
+          // Chỉ giữ mention là thành viên hợp lệ (loại trùng, loại người ngoài nhóm)
+          const mentions = mentionAll
+            ? []
+            : [...new Set((Array.isArray(payload.mentions) ? payload.mentions : []).map(String))].filter(
+                (id) => memberIds.includes(id)
+              );
 
           // Không cho gửi tin rỗng
           if (type === "text" && !text.trim()) {
@@ -174,6 +195,8 @@ export const initSocket = (httpServer: HttpServer): Server => {
             text,
             attachments,
             sticker,
+            mentions,
+            mentionAll,
           });
 
           // Cập nhật xem nhanh tin cuối cho danh sách nhóm
@@ -197,6 +220,8 @@ export const initSocket = (httpServer: HttpServer): Server => {
             text,
             attachments,
             sticker,
+            mentions,
+            mentionAll,
             sender: {
               _id: user.id,
               fullName: user.fullName,
@@ -207,6 +232,25 @@ export const initSocket = (httpServer: HttpServer): Server => {
           };
 
           io?.to(roomOf(groupId)).emit("message:new", message);
+
+          // Thông báo tới room cá nhân của TỪNG thành viên (trừ người gửi) — dùng cho badge + toast
+          const groupName = String(group.get("name") || "");
+          const groupColor = String(group.get("color") || "#FF6B35");
+          for (const memberId of memberIds) {
+            if (memberId === String(user.id)) continue;
+            const mentionedYou = mentionAll || mentions.includes(memberId);
+            io?.to(userRoomOf(memberId)).emit("group:notify", {
+              groupId,
+              groupName,
+              groupColor,
+              senderId: user.id,
+              senderName: user.fullName,
+              preview: preview.slice(0, 120),
+              mentionedYou,
+              createdAt: doc.get("createdAt"),
+            });
+          }
+
           cb?.({ ok: true, message });
         } catch (err) {
           console.error("message:send error", err);

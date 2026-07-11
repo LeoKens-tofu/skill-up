@@ -1,11 +1,11 @@
 'use client';
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import {
-  Users, Plus, Search, MessagesSquare, Copy, Check, Share2,
-  Crown, Loader2, UserPlus, X,
+  Users, Plus, Search, MessagesSquare, Check, Share2,
+  Crown, Loader2, UserPlus, X, Info, Bell, BellOff, LogOut, ChevronLeft,
 } from "lucide-react";
 import { toast } from "sonner";
-import { API_URL } from "@/lib/socket";
+import { API_URL, getSocket } from "@/lib/socket";
 import GroupChat from "@/components/GroupChat";
 
 const SHADOW = "6px 6px 0px 0px rgba(0,0,0,1)";
@@ -33,6 +33,7 @@ export type StudyGroup = {
   inviteCode: string;
   memberCount: number;
   role: "owner" | "member";
+  muted?: boolean;
   lastMessageText: string;
   lastSenderName: string;
   lastMessageAt: string | null;
@@ -63,6 +64,16 @@ export default function StudyGroupsPage() {
   const [createOpen, setCreateOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [myId, setMyId] = useState("");
+  const [showInfo, setShowInfo] = useState(false);
+  const [muting, setMuting] = useState(false);
+  const [leaving, setLeaving] = useState(false);
+  const [unread, setUnread] = useState<Record<string, number>>({});
+
+  // Ref để handler socket đọc trạng thái mới nhất mà không cần đăng ký lại
+  const selectedIdRef = useRef<string | null>(null);
+  const groupsRef = useRef<StudyGroup[]>([]);
+  useEffect(() => { selectedIdRef.current = selectedId; });
+  useEffect(() => { groupsRef.current = groups; });
 
   // Lấy id của mình 1 lần để căn phải tin nhắn của bản thân
   useEffect(() => {
@@ -104,6 +115,14 @@ export default function StudyGroupsPage() {
   useEffect(() => {
     if (!selectedId) { setDetail(null); return; }
     let alive = true;
+    setShowInfo(false); // đổi nhóm thì đóng panel thông tin
+    // Mở nhóm → xóa badge chưa đọc của nhóm đó
+    setUnread((prev) => {
+      if (!prev[selectedId]) return prev;
+      const cp = { ...prev };
+      delete cp[selectedId];
+      return cp;
+    });
     setDetailLoading(true);
     fetch(`${API_URL}/client/student/groups/${selectedId}`, { credentials: "include" })
       .then((r) => r.json())
@@ -112,6 +131,73 @@ export default function StudyGroupsPage() {
       .finally(() => { if (alive) setDetailLoading(false); });
     return () => { alive = false; };
   }, [selectedId]);
+
+  // Xin quyền thông báo trình duyệt (êm, không ép)
+  useEffect(() => {
+    if (typeof Notification !== "undefined" && Notification.permission === "default") {
+      Notification.requestPermission().catch(() => {});
+    }
+  }, []);
+
+  // Lắng nghe thông báo tin nhắn từ MỌI nhóm (kể cả nhóm đang không mở)
+  useEffect(() => {
+    const socket = getSocket();
+    const onNotify = (n: {
+      groupId: string; groupName: string; groupColor: string;
+      senderId: string; senderName: string; preview: string;
+      mentionedYou: boolean; createdAt: string;
+    }) => {
+      // Cập nhật xem nhanh + đẩy nhóm lên đầu danh sách
+      setGroups((prev) => {
+        const idx = prev.findIndex((g) => g._id === n.groupId);
+        if (idx < 0) return prev; // không thuộc danh sách của tôi → bỏ qua
+        const updated: StudyGroup = {
+          ...prev[idx],
+          lastMessageText: n.preview,
+          lastSenderName: n.senderName,
+          lastMessageAt: n.createdAt,
+        };
+        return [updated, ...prev.filter((_, i) => i !== idx)];
+      });
+
+      // Đang mở đúng nhóm đó → không cần badge/toast (đã thấy tin realtime)
+      if (selectedIdRef.current === n.groupId) return;
+
+      // Badge chưa đọc luôn tăng (kể cả khi đã tắt thông báo)
+      setUnread((prev) => ({ ...prev, [n.groupId]: (prev[n.groupId] || 0) + 1 }));
+
+      const muted = !!groupsRef.current.find((g) => g._id === n.groupId)?.muted;
+      // Đã tắt thông báo và không bị nhắc tên → im lặng
+      if (muted && !n.mentionedYou) return;
+
+      const openIt = () => setSelectedId(n.groupId);
+      if (n.mentionedYou) {
+        toast(`${n.senderName} đã nhắc đến bạn`, {
+          description: `${n.groupName}: ${n.preview}`,
+          action: { label: "Mở", onClick: openIt },
+        });
+      } else {
+        toast(n.groupName, {
+          description: `${n.senderName}: ${n.preview}`,
+          action: { label: "Mở", onClick: openIt },
+        });
+      }
+
+      // Thông báo hệ thống khi tab đang ẩn
+      if (typeof Notification !== "undefined" && Notification.permission === "granted" && document.hidden) {
+        try {
+          const notif = new Notification(
+            n.mentionedYou ? `${n.senderName} đã nhắc đến bạn` : n.groupName,
+            { body: n.mentionedYou ? `${n.groupName}: ${n.preview}` : `${n.senderName}: ${n.preview}` }
+          );
+          notif.onclick = () => { window.focus(); openIt(); notif.close(); };
+        } catch {}
+      }
+    };
+
+    socket.on("group:notify", onNotify);
+    return () => { socket.off("group:notify", onNotify); };
+  }, []);
 
   const copyInvite = async () => {
     if (!detail) return;
@@ -133,6 +219,63 @@ export default function StudyGroupsPage() {
   );
 
   const selected = detail && detail._id === selectedId ? detail : groups.find((g) => g._id === selectedId) || null;
+
+  // Bật/tắt thông báo nhóm (cập nhật cả list lẫn detail để đồng bộ)
+  const toggleMute = async () => {
+    if (!selected || muting) return;
+    const next = !selected.muted;
+    setMuting(true);
+    try {
+      const res = await fetch(`${API_URL}/client/student/groups/${selected._id}/mute`, {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ muted: next }),
+      });
+      const d = await res.json();
+      if (d.code === "success") {
+        setGroups((prev) => prev.map((g) => (g._id === selected._id ? { ...g, muted: next } : g)));
+        setDetail((prev) => (prev && prev._id === selected._id ? { ...prev, muted: next } : prev));
+        toast.success(d.message);
+      } else {
+        toast.error(d.message || "Không đổi được cài đặt thông báo");
+      }
+    } catch {
+      toast.error("Lỗi kết nối máy chủ");
+    } finally {
+      setMuting(false);
+    }
+  };
+
+  // Rời nhóm (chủ nhóm bị chặn ở backend)
+  const leaveGroup = async () => {
+    if (!selected || leaving) return;
+    setLeaving(true);
+    try {
+      const res = await fetch(`${API_URL}/client/student/groups/${selected._id}/leave`, {
+        method: "POST",
+        credentials: "include",
+      });
+      const d = await res.json();
+      if (d.code === "success") {
+        const leftId = selected._id;
+        toast.success("Đã rời nhóm");
+        setShowInfo(false);
+        setDetail(null);
+        setGroups((prev) => {
+          const remaining = prev.filter((g) => g._id !== leftId);
+          setSelectedId(remaining[0]?._id || null);
+          return remaining;
+        });
+      } else {
+        toast.error(d.message || "Không rời được nhóm");
+      }
+    } catch {
+      toast.error("Lỗi kết nối máy chủ");
+    } finally {
+      setLeaving(false);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -194,11 +337,21 @@ export default function StudyGroupsPage() {
                   }}
                 >
                   <div className="flex items-start gap-2.5">
-                    <div
-                      className="w-10 h-10 border-[2px] border-black flex items-center justify-center flex-shrink-0 font-serif text-white text-sm"
-                      style={{ backgroundColor: g.color, fontWeight: 800 }}
-                    >
-                      {initials(g.name)}
+                    <div className="relative flex-shrink-0">
+                      <div
+                        className="w-10 h-10 border-[2px] border-black flex items-center justify-center font-serif text-white text-sm"
+                        style={{ backgroundColor: g.color, fontWeight: 800 }}
+                      >
+                        {initials(g.name)}
+                      </div>
+                      {unread[g._id] > 0 && (
+                        <span
+                          className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 border-[2px] border-black bg-[#991B1B] text-white font-sans text-[10px] flex items-center justify-center"
+                          style={{ fontWeight: 800 }}
+                        >
+                          {unread[g._id] > 9 ? "9+" : unread[g._id]}
+                        </span>
+                      )}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
@@ -224,6 +377,7 @@ export default function StudyGroupsPage() {
                         <span className="font-sans text-[10px] text-[#0A1628]/50" style={{ fontWeight: 600 }}>
                           {g.memberCount} thành viên
                         </span>
+                        {g.muted && <BellOff size={12} className="text-[#0A1628]/40" />}
                         {g.lastMessageAt && (
                           <span className="font-sans text-[10px] text-[#0A1628]/40 ml-auto" style={{ fontWeight: 600 }}>
                             {timeAgo(g.lastMessageAt)}
@@ -239,7 +393,7 @@ export default function StudyGroupsPage() {
         </div>
 
         {/* Group detail */}
-        <div className="border-[4px] border-black bg-[#FFF8F0] flex flex-col" style={{ boxShadow: SHADOW, height: "80vh", minHeight: 520 }}>
+        <div className="border-[4px] border-black bg-[#FFF8F0] flex flex-col relative" style={{ boxShadow: SHADOW, height: "80vh", minHeight: 520 }}>
           {!selected ? (
             <div className="flex-1 flex flex-col items-center justify-center text-center p-8">
               <div className="w-20 h-20 border-[4px] border-black bg-[#FFD166] flex items-center justify-center mb-4 rotate-[-4deg]" style={{ boxShadow: SHADOW }}>
@@ -256,62 +410,71 @@ export default function StudyGroupsPage() {
             <>
               {/* Header */}
               <div className="px-5 py-4 border-b-[3px] border-black flex items-center gap-3">
-                <div
-                  className="w-12 h-12 border-[3px] border-black flex items-center justify-center font-serif text-white flex-shrink-0"
-                  style={{ backgroundColor: selected.color, fontWeight: 800 }}
-                >
-                  {initials(selected.name)}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-serif text-[#0A1628] truncate" style={{ fontWeight: 800, fontSize: "1.2rem" }}>
-                    {selected.name}
-                  </h3>
-                  <p className="font-sans text-xs text-[#0A1628]/60" style={{ fontWeight: 500 }}>
-                    {selected.memberCount} thành viên{selected.subject ? ` · ${selected.subject}` : ""}
-                  </p>
-                </div>
                 <button
-                  onClick={copyInvite}
-                  className="flex items-center gap-1.5 border-[3px] border-black bg-[#16A34A] text-white px-3 py-2 font-sans text-xs hover:-translate-y-0.5 hover:-translate-x-0.5 active:translate-x-1 active:translate-y-1 transition-transform"
-                  style={{ boxShadow: SHADOW_XS, fontWeight: 700 }}
+                  onClick={() => setShowInfo(true)}
+                  className="flex items-center gap-3 flex-1 min-w-0 text-left group/hd"
+                  title="Xem thông tin nhóm"
                 >
-                  {copied ? <Check size={15} /> : <Share2 size={15} />} {copied ? "Đã copy" : "Mời"}
+                  <div
+                    className="w-12 h-12 border-[3px] border-black flex items-center justify-center font-serif text-white flex-shrink-0"
+                    style={{ backgroundColor: selected.color, fontWeight: 800 }}
+                  >
+                    {initials(selected.name)}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-serif text-[#0A1628] truncate flex items-center gap-1.5 group-hover/hd:text-[#FF6B35] transition-colors" style={{ fontWeight: 800, fontSize: "1.2rem" }}>
+                      {selected.name}
+                      {selected.muted && <BellOff size={14} className="text-[#0A1628]/40 flex-shrink-0" />}
+                    </h3>
+                    <p className="font-sans text-xs text-[#0A1628]/60" style={{ fontWeight: 500 }}>
+                      {selected.memberCount} thành viên{selected.subject ? ` · ${selected.subject}` : ""}
+                    </p>
+                  </div>
                 </button>
-              </div>
-
-              {/* Invite code strip */}
-              <div className="px-5 py-2.5 border-b-[3px] border-black bg-[#FFE4D6] flex items-center gap-2 flex-wrap">
-                <span className="font-sans text-[11px] uppercase tracking-wider text-[#0A1628]/60" style={{ fontWeight: 700 }}>
-                  Mã mời
-                </span>
-                <code className="font-mono text-sm px-2 py-0.5 border-[2px] border-black bg-white text-[#0A1628]" style={{ fontWeight: 700, letterSpacing: "0.1em" }}>
-                  {selected.inviteCode}
-                </code>
-                <button onClick={copyInvite} className="text-[#0A1628]/60 hover:text-[#FF6B35] transition-colors" title="Sao chép link">
-                  {copied ? <Check size={15} /> : <Copy size={15} />}
+                <button
+                  onClick={toggleMute}
+                  disabled={muting}
+                  className="border-[3px] border-black bg-white text-[#0A1628] p-2.5 hover:-translate-y-0.5 active:translate-y-0.5 transition-transform disabled:opacity-60"
+                  style={{ boxShadow: SHADOW_XS }}
+                  title={selected.muted ? "Bật thông báo" : "Tắt thông báo"}
+                >
+                  {muting ? <Loader2 size={18} className="animate-spin" /> : selected.muted ? <BellOff size={18} /> : <Bell size={18} />}
                 </button>
-              </div>
-
-              {/* Members */}
-              <div className="px-5 py-3 border-b-[3px] border-black">
-                <p className="font-sans text-[11px] uppercase tracking-wider text-[#0A1628]/50 mb-2" style={{ fontWeight: 700 }}>
-                  Thành viên {detailLoading && <Loader2 size={11} className="inline animate-spin ml-1" />}
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {(detail?.members || []).map((m) => (
-                    <div key={m._id} className="flex items-center gap-2 border-[2px] border-black bg-white pl-1 pr-2.5 py-1" style={{ boxShadow: SHADOW_XS }}>
-                      <div className="w-7 h-7 border-[2px] border-black bg-[#FFD166] flex items-center justify-center overflow-hidden font-serif text-[11px] text-[#0A1628]" style={{ fontWeight: 800 }}>
-                        {m.avatar ? <img src={m.avatar} alt={m.fullName} className="w-full h-full object-cover" /> : initials(m.fullName)}
-                      </div>
-                      <span className="font-sans text-xs text-[#0A1628]" style={{ fontWeight: 600 }}>{m.fullName}</span>
-                      {m.role === "owner" && <Crown size={12} className="text-[#FF6B35]" />}
-                    </div>
-                  ))}
-                </div>
+                <button
+                  onClick={() => setShowInfo(true)}
+                  className="border-[3px] border-black bg-[#FFD166] text-[#0A1628] p-2.5 hover:-translate-y-0.5 active:translate-y-0.5 transition-transform"
+                  style={{ boxShadow: SHADOW_XS }}
+                  title="Thông tin nhóm"
+                >
+                  <Info size={18} />
+                </button>
               </div>
 
               {/* Chat realtime */}
-              <GroupChat key={selected._id} groupId={selected._id} groupColor={selected.color} myId={myId} />
+              <GroupChat
+                key={selected._id}
+                groupId={selected._id}
+                groupColor={selected.color}
+                myId={myId}
+                members={detail?._id === selected._id ? detail?.members || [] : []}
+              />
+
+              {/* Panel thông tin nhóm (trượt từ phải, kiểu Messenger) */}
+              {showInfo && (
+                <GroupInfoPanel
+                  group={selected}
+                  members={detail?.members || []}
+                  membersLoading={detailLoading}
+                  myId={myId}
+                  copied={copied}
+                  onCopyInvite={copyInvite}
+                  muting={muting}
+                  onToggleMute={toggleMute}
+                  leaving={leaving}
+                  onLeave={leaveGroup}
+                  onClose={() => setShowInfo(false)}
+                />
+              )}
             </>
           )}
         </div>
@@ -349,6 +512,185 @@ function EmptyGroups({ hasGroups, onCreate }: { hasGroups: boolean; onCreate: ()
           <Plus size={14} /> Tạo nhóm đầu tiên
         </button>
       )}
+    </div>
+  );
+}
+
+function GroupInfoPanel({
+  group,
+  members,
+  membersLoading,
+  myId,
+  copied,
+  onCopyInvite,
+  muting,
+  onToggleMute,
+  leaving,
+  onLeave,
+  onClose,
+}: {
+  group: StudyGroup;
+  members: GroupMember[];
+  membersLoading: boolean;
+  myId: string;
+  copied: boolean;
+  onCopyInvite: () => void;
+  muting: boolean;
+  onToggleMute: () => void;
+  leaving: boolean;
+  onLeave: () => void;
+  onClose: () => void;
+}) {
+  const [entered, setEntered] = useState(false);
+  const [confirmLeave, setConfirmLeave] = useState(false);
+  const isOwner = group.role === "owner";
+
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setEntered(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
+
+  // Trượt ra rồi mới gỡ khỏi DOM để có hiệu ứng đóng mượt
+  const handleClose = () => {
+    setEntered(false);
+    setTimeout(onClose, 200);
+  };
+
+  return (
+    <div className="absolute inset-0 z-30 overflow-hidden">
+      {/* Nền mờ che chat */}
+      <div
+        onClick={handleClose}
+        className={`absolute inset-0 bg-black/30 transition-opacity duration-200 ${entered ? "opacity-100" : "opacity-0"}`}
+      />
+      {/* Bảng thông tin */}
+      <div
+        className={`absolute inset-y-0 right-0 w-[330px] max-w-[88%] bg-[#FFF8F0] border-l-[4px] border-black flex flex-col transition-transform duration-200 ${entered ? "translate-x-0" : "translate-x-full"}`}
+      >
+        {/* Header panel */}
+        <div className="flex items-center gap-2 px-4 py-3 border-b-[3px] border-black bg-[#0A1628]">
+          <button onClick={handleClose} className="text-white/80 hover:text-white transition-colors" title="Đóng">
+            <ChevronLeft size={20} />
+          </button>
+          <p className="font-serif text-white flex-1" style={{ fontWeight: 700 }}>Thông tin nhóm</p>
+          <button onClick={handleClose} className="text-white/80 hover:text-white transition-colors" title="Đóng">
+            <X size={18} />
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto">
+          {/* Nhận diện nhóm */}
+          <div className="px-5 py-5 border-b-[3px] border-black flex flex-col items-center text-center">
+            <div
+              className="w-16 h-16 border-[3px] border-black flex items-center justify-center font-serif text-white mb-2"
+              style={{ backgroundColor: group.color, fontWeight: 800, fontSize: "1.4rem", boxShadow: SHADOW_XS }}
+            >
+              {initials(group.name)}
+            </div>
+            <h3 className="font-serif text-[#0A1628]" style={{ fontWeight: 800, fontSize: "1.15rem" }}>{group.name}</h3>
+            {group.subject && (
+              <span className="mt-1.5 font-sans text-[11px] px-2 py-0.5 border-[2px] border-black bg-[#FFD166] text-[#0A1628]" style={{ fontWeight: 700 }}>
+                {group.subject}
+              </span>
+            )}
+            {group.description && (
+              <p className="font-sans text-xs text-[#0A1628]/60 mt-2" style={{ fontWeight: 500 }}>{group.description}</p>
+            )}
+          </div>
+
+          {/* Mã mời */}
+          <div className="px-5 py-4 border-b-[3px] border-black">
+            <p className="font-sans text-[11px] uppercase tracking-wider text-[#0A1628]/50 mb-2" style={{ fontWeight: 700 }}>
+              Mời bạn học
+            </p>
+            <div className="flex items-center gap-2 mb-2">
+              <code className="font-mono text-sm px-2 py-1 border-[2px] border-black bg-white text-[#0A1628] flex-1 text-center" style={{ fontWeight: 700, letterSpacing: "0.12em" }}>
+                {group.inviteCode}
+              </code>
+            </div>
+            <button
+              onClick={onCopyInvite}
+              className="w-full flex items-center justify-center gap-1.5 border-[3px] border-black bg-[#16A34A] text-white px-3 py-2 font-sans text-xs hover:-translate-y-0.5 active:translate-y-0.5 transition-transform"
+              style={{ boxShadow: SHADOW_XS, fontWeight: 700 }}
+            >
+              {copied ? <Check size={15} /> : <Share2 size={15} />} {copied ? "Đã sao chép link" : "Sao chép link mời"}
+            </button>
+          </div>
+
+          {/* Thành viên */}
+          <div className="px-5 py-4 border-b-[3px] border-black">
+            <p className="font-sans text-[11px] uppercase tracking-wider text-[#0A1628]/50 mb-2 flex items-center gap-1.5" style={{ fontWeight: 700 }}>
+              Thành viên ({group.memberCount})
+              {membersLoading && <Loader2 size={11} className="animate-spin" />}
+            </p>
+            <div className="space-y-1.5">
+              {members.map((m) => (
+                <div key={m._id} className="flex items-center gap-2.5 border-[2px] border-black bg-white pl-1 pr-2.5 py-1" style={{ boxShadow: SHADOW_XS }}>
+                  <div className="w-8 h-8 border-[2px] border-black bg-[#FFD166] flex items-center justify-center overflow-hidden font-serif text-[11px] text-[#0A1628] flex-shrink-0" style={{ fontWeight: 800 }}>
+                    {m.avatar ? <img src={m.avatar} alt={m.fullName} className="w-full h-full object-cover" /> : initials(m.fullName)}
+                  </div>
+                  <span className="font-sans text-sm text-[#0A1628] flex-1 min-w-0 truncate" style={{ fontWeight: 600 }}>
+                    {m.fullName}
+                    {String(m._id) === String(myId) && <span className="text-[#0A1628]/40"> (Bạn)</span>}
+                  </span>
+                  {m.role === "owner" && (
+                    <span className="flex items-center gap-1 font-sans text-[10px] text-[#FF6B35]" style={{ fontWeight: 700 }}>
+                      <Crown size={12} /> Chủ nhóm
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Hành động */}
+        <div className="px-5 py-4 border-t-[3px] border-black bg-[#FFF8F0] space-y-2">
+          <button
+            onClick={onToggleMute}
+            disabled={muting}
+            className="w-full flex items-center justify-center gap-2 border-[3px] border-black bg-white text-[#0A1628] py-2.5 font-sans text-sm hover:-translate-y-0.5 active:translate-y-0.5 transition-transform disabled:opacity-60"
+            style={{ boxShadow: SHADOW_XS, fontWeight: 700 }}
+          >
+            {muting ? <Loader2 size={16} className="animate-spin" /> : group.muted ? <Bell size={16} /> : <BellOff size={16} />}
+            {group.muted ? "Bật thông báo" : "Tắt thông báo"}
+          </button>
+
+          {isOwner ? (
+            <p className="font-sans text-[11px] text-center text-[#0A1628]/45 pt-1" style={{ fontWeight: 500 }}>
+              Bạn là chủ nhóm nên không thể rời nhóm.
+            </p>
+          ) : confirmLeave ? (
+            <div className="flex gap-2">
+              <button
+                onClick={() => setConfirmLeave(false)}
+                disabled={leaving}
+                className="flex-1 border-[3px] border-black bg-white text-[#0A1628] py-2.5 font-sans text-sm hover:-translate-y-0.5 transition-transform disabled:opacity-60"
+                style={{ boxShadow: SHADOW_XS, fontWeight: 700 }}
+              >
+                Hủy
+              </button>
+              <button
+                onClick={onLeave}
+                disabled={leaving}
+                className="flex-1 flex items-center justify-center gap-2 border-[3px] border-black bg-[#991B1B] text-white py-2.5 font-sans text-sm hover:-translate-y-0.5 active:translate-y-0.5 transition-transform disabled:opacity-60"
+                style={{ boxShadow: SHADOW_XS, fontWeight: 700 }}
+              >
+                {leaving ? <Loader2 size={16} className="animate-spin" /> : <LogOut size={16} />}
+                Xác nhận rời
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setConfirmLeave(true)}
+              className="w-full flex items-center justify-center gap-2 border-[3px] border-black bg-white text-[#991B1B] py-2.5 font-sans text-sm hover:-translate-y-0.5 active:translate-y-0.5 transition-transform"
+              style={{ boxShadow: SHADOW_XS, fontWeight: 700 }}
+            >
+              <LogOut size={16} /> Rời nhóm
+            </button>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

@@ -27,6 +27,7 @@ router.post("/join", requireAuth, controller.joinGroup);
 router.get("/:id", requireAuth, controller.getGroupDetail);
 router.get("/:id/messages", requireAuth, controller.getMessages);
 router.post("/:id/leave", requireAuth, controller.leaveGroup);
+router.patch("/:id/mute", requireAuth, controller.muteGroup);
 router.post(
   "/:id/upload",
   requireAuth,

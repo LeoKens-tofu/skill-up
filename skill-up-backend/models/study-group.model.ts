@@ -5,6 +5,7 @@ const memberSchema = new Schema(
     studentId: { type: Schema.Types.ObjectId, ref: "Student", required: true },
     role: { type: String, enum: ["owner", "member"], default: "member" },
     joinedAt: { type: Date, default: Date.now },
+    muted: { type: Boolean, default: false }, // Tắt thông báo nhóm (theo từng thành viên)
   },
   { _id: false }
 );

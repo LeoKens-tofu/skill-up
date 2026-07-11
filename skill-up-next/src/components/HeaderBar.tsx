@@ -29,11 +29,22 @@ const notifTone = (icon: string): { bg: string; emoji: string } => {
   }
 };
 
+function ProfileChipSkeleton({ student }: { student: boolean }) {
+  return (
+    <div className="text-left animate-pulse">
+      <div className="h-3.5 w-28 bg-[#0A1628]/15 mb-1.5" />
+      <div className="h-2.5 w-20 bg-[#0A1628]/10" />
+      {student && <div className="h-2 w-32 bg-[#0A1628]/10 mt-2" />}
+    </div>
+  );
+}
+
 export default function HeaderBar({
   role,
   areaLabel,
   sectionTitle,
   profile,
+  loading = false,
   onLogout,
   initialNotifications = [],
 }: {
@@ -41,6 +52,7 @@ export default function HeaderBar({
   areaLabel: string;
   sectionTitle: string;
   profile: any;
+  loading?: boolean;
   onLogout: () => void;
   initialNotifications?: NotificationItem[];
 }) {
@@ -49,6 +61,7 @@ export default function HeaderBar({
   const unreadCount = notifications.filter((n) => n.unread).length;
 
   const accent = role === "teacher" ? "#FF6B35" : "#FF6B35";
+  const isLoading = loading && !profile; // đang tải hồ sơ lần đầu → hiện skeleton
   const displayName = profile?.fullName || (role === "teacher" ? "Giảng viên" : "Học viên");
   const avatarSrc = profile?.avatar || "/imports/image-4.png";
 
@@ -160,11 +173,20 @@ export default function HeaderBar({
 
         {/* Profile chip */}
         <div className="flex items-center gap-3 border-[3px] border-black bg-[#FFF8F0] pl-2 pr-4 py-2" style={{ boxShadow: SHADOW_SM }}>
-          <div className="w-11 h-11 border-[3px] border-black overflow-hidden bg-[#FF6B35] flex items-center justify-center flex-shrink-0">
-            <img src={avatarSrc} alt={displayName} className="w-full h-full object-cover" />
+          <div
+            className="w-11 h-11 border-[3px] border-black overflow-hidden flex items-center justify-center flex-shrink-0"
+            style={{ backgroundColor: isLoading ? "#E5E1DA" : "#FF6B35" }}
+          >
+            {isLoading ? (
+              <span className="w-full h-full bg-[#0A1628]/10 animate-pulse" />
+            ) : (
+              <img src={avatarSrc} alt={displayName} className="w-full h-full object-cover" />
+            )}
           </div>
 
-          {role === "student" ? (
+          {isLoading ? (
+            <ProfileChipSkeleton student={role === "student"} />
+          ) : role === "student" ? (
             <div className="text-left">
               <div className="flex items-baseline gap-2">
                 <p className="font-sans text-sm text-[#0A1628] leading-tight" style={{ fontWeight: 700 }}>{displayName}</p>

@@ -18,6 +18,8 @@ const groupMessageSchema = new Schema(
     text: { type: String, default: "" }, // Text + emoji (unicode)
     attachments: { type: [attachmentSchema], default: [] }, // Ảnh / file đính kèm
     sticker: { type: String, default: "" }, // Mã sticker (emoji-sticker)
+    mentions: { type: [Schema.Types.ObjectId], ref: "Student", default: [] }, // Các thành viên được @nhắc tên
+    mentionAll: { type: Boolean, default: false }, // @all — nhắc toàn nhóm
   },
   { timestamps: true }
 );
